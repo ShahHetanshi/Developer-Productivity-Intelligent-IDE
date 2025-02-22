@@ -1,9 +1,11 @@
 const express = require('express');
-const { exec } = require('child_process');
+const { spawn, exec } = require('child_process');
 const cors = require('cors');
-const fs = require('fs');
 const bodyParser = require('body-parser');
 const os = require('os');
+const fs = require('fs');
+const path = require('path');
+const tmp = require('tmp');
 
 const app = express();
 app.use(cors());
@@ -11,89 +13,100 @@ app.use(bodyParser.json());
 
 app.post('/execute-code', (req, res) => {
     const { code, language, input } = req.body;
-    let filename, compileCmd, runCmd, outputFile, executable, inputFile;
+    let runCmd, args = [], tempFile, tempDir, compileCmd = null, executable = null;
 
-    inputFile = 'input.txt';
-    outputFile = 'output.txt';
-    if (input) fs.writeFileSync(inputFile, input); // Save input to a file
+    if (!code || !language) {
+        return res.json({ error: "Code and language are required" });
+    }
+
+    // Direct execution for interpreted languages
+    if (["python", "javascript", "typescript"].includes(language)) {
+        switch (language) {
+            case 'python':
+                runCmd = 'python';
+                args = ['-c', code];
+                break;
+
+            case 'javascript':
+                runCmd = 'node';
+                args = ['-e', code];
+                break;
+
+            case 'typescript':
+                runCmd = 'ts-node';
+                args = ['-e', code];
+                break;
+        }
+
+        const process = spawn(runCmd, args);
+        if (input) {
+            process.stdin.write(input);
+            process.stdin.end();
+        }
+
+        let output = "", errorOutput = "";
+        process.stdout.on('data', (data) => output += data.toString());
+        process.stderr.on('data', (data) => errorOutput += data.toString());
+
+        process.on('close', (code) => {
+            res.json(code === 0 ? { output: output.trim() } : { error: errorOutput.trim() || "Runtime error" });
+        });
+        return;
+    }
+
+    // Compiled languages need temporary file storage
+    tempDir = tmp.dirSync({ unsafeCleanup: true }).name;
 
     switch (language) {
-        case 'python':
-            filename = 'temp.py';
-            fs.writeFileSync(filename, code);
-            compileCmd = ``;
-            runCmd = `python ${filename} < ${inputFile} > ${outputFile} 2>&1`;
+        case 'c':
+            tempFile = path.join(tempDir, 'temp.c');
+            executable = path.join(tempDir, os.platform() === "win32" ? 'temp.exe' : './temp.out');
+            fs.writeFileSync(tempFile, code);
+            compileCmd = `gcc ${tempFile} -o ${executable}`;
+            runCmd = `${executable}`;
             break;
 
         case 'cpp':
-            filename = 'temp.cpp';
-            executable = os.platform() === "win32" ? "temp.exe" : "./temp.out";
-            fs.writeFileSync(filename, code);
-            compileCmd = `g++ ${filename} -o ${executable} 2>${outputFile}`;
-            runCmd = `${executable} < ${inputFile} > ${outputFile} 2>&1`;
-            break;
-
-        case 'c':
-            filename = 'temp.c';
-            executable = os.platform() === "win32" ? "temp.exe" : "./temp.out";
-            fs.writeFileSync(filename, code);
-            compileCmd = `gcc ${filename} -o ${executable} 2>${outputFile}`;
-            runCmd = `${executable} < ${inputFile} > ${outputFile} 2>&1`;
+            tempFile = path.join(tempDir, 'temp.cpp');
+            executable = path.join(tempDir, os.platform() === "win32" ? 'temp.exe' : './temp.out');
+            fs.writeFileSync(tempFile, code);
+            compileCmd = `g++ ${tempFile} -o ${executable}`;
+            runCmd = `${executable}`;
             break;
 
         case 'java':
-            filename = 'Main.java';
-            fs.writeFileSync(filename, code);
-            compileCmd = `javac ${filename} 2>${outputFile}`;
-            runCmd = `java Main < ${inputFile} > ${outputFile} 2>&1`;
-            break;
-
-        case 'javascript':
-            filename = 'temp.js';
-            fs.writeFileSync(filename, code);
-            compileCmd = ``;
-            runCmd = `node ${filename} < ${inputFile} > ${outputFile} 2>&1`;
-            break;
-
-        case 'typescript':
-            filename = 'temp.ts';
-            fs.writeFileSync(filename, code);
-            compileCmd = `tsc ${filename} --outFile temp.js 2>${outputFile}`;
-            runCmd = `node temp.js < ${inputFile} > ${outputFile} 2>&1`;
+            tempFile = path.join(tempDir, 'Main.java');
+            fs.writeFileSync(tempFile, code);
+            compileCmd = `javac ${tempFile}`;
+            runCmd = `java -cp ${tempDir} Main`;
             break;
 
         default:
             return res.json({ error: "Unsupported language" });
     }
 
-    const executeCommand = (command, callback) => {
-        exec(command, (error) => {
-            const output = fs.existsSync(outputFile) ? fs.readFileSync(outputFile, 'utf8').trim() : '';
-            callback(error, output);
-        });
-    };
+    // Compile the code first
+    exec(compileCmd, (compileError, compileOutput, compileStderr) => {
+        if (compileError) {
+            return res.json({ error: compileStderr || "Compilation error" });
+        }
 
-    if (compileCmd) {
-        executeCommand(compileCmd, (compileError, compileOutput) => {
-            if (compileError) {
-                return res.json({ error: compileOutput || "Compilation error" });
-            }
+        // Execute the compiled program
+        const process = spawn(runCmd, { cwd: tempDir });
 
-            executeCommand(runCmd, (runError, runOutput) => {
-                if (runError) {
-                    return res.json({ error: "Runtime error", output: runOutput });
-                }
-                return res.json({ output: runOutput });
-            });
+        if (input) {
+            process.stdin.write(input);
+            process.stdin.end();
+        }
+
+        let output = "", errorOutput = "";
+        process.stdout.on('data', (data) => output += data.toString());
+        process.stderr.on('data', (data) => errorOutput += data.toString());
+
+        process.on('close', (code) => {
+            res.json(code === 0 ? { output: output.trim() } : { error: errorOutput.trim() || "Runtime error" });
         });
-    } else {
-        executeCommand(runCmd, (runError, runOutput) => {
-            if (runError) {
-                return res.json({ error: "Runtime error", output: runOutput });
-            }
-            return res.json({ output: runOutput });
-        });
-    }
+    });
 });
 
 app.listen(3000, () => {
