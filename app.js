@@ -35,49 +35,49 @@ require(['vs/editor/editor.main'], function() {
   function getDefaultCode(language) {
     switch (language) {
       case 'python':
-        return `# Welcome to Python!\nprint("Hello, World!")`;
+        return `# Welcome to Python!\nname = input("Enter your name: ")\nprint("Hello, " + name)`;
       case 'cpp':
-        return `// Welcome to C++!\n#include <iostream>\nusing namespace std;\nint main() {\n  cout << "Hello, World!" << endl;\n  return 0;\n}`;
+        return `// Welcome to C++!\n#include <iostream>\nusing namespace std;\nint main() {\n  int num;\n  cout << "Enter a number: ";\n  cin >> num;\n  cout << "You entered: " << num << endl;\n  return 0;\n}`;
       case 'c':
-        return `// Welcome to C!\n#include <stdio.h>\nint main() {\n  printf("Hello, World!\\n");\n  return 0;\n}`;
+        return `// Welcome to C!\n#include <stdio.h>\nint main() {\n  int num;\n  printf("Enter a number: ");\n  scanf("%d", &num);\n  printf("You entered: %d\\n", num);\n  return 0;\n}`;
       case 'java':
-        return `// Welcome to Java!\npublic class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello, World!");\n  }\n}`;
+        return `// Welcome to Java!\nimport java.util.Scanner;\npublic class Main {\n  public static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    System.out.print("Enter a number: ");\n    int num = scanner.nextInt();\n    System.out.println("You entered: " + num);\n  }\n}`;
       case 'javascript':
-        return `// Welcome to JavaScript!\nconsole.log("Hello, World!");`;
+        return `// Welcome to JavaScript!\nconst name = prompt("Enter your name:");\nconsole.log("Hello, " + name);`;
       case 'typescript':
-        return `// Welcome to TypeScript!\nconsole.log("Hello, World!");`;
+        return `// Welcome to TypeScript!\nconst name: string | null = prompt("Enter your name:");\nconsole.log("Hello, " + name);`;
       default:
         return `// Unsupported language`;
     }
   }
 
   // Run button functionality
-  document.getElementById('run-button').addEventListener('click', () => {
+  document.getElementById('run-button').addEventListener('click', async () => {
     clearTerminal();
     const code = editor.getValue();
     const language = languageSelect.value;
-    executeCode(code, language);
+    await executeCode(code, language);
   });
 
   // Debug button functionality
-  document.getElementById('debug-button').addEventListener('click', () => {
+  document.getElementById('debug-button').addEventListener('click', async () => {
     clearTerminal();
     const code = editor.getValue();
     const language = languageSelect.value;
-    debugCode(code, language);
+    await debugCode(code, language);
   });
 
   // Show Errors button functionality
-  document.getElementById('show-errors-button').addEventListener('click', () => {
+  document.getElementById('show-errors-button').addEventListener('click', async () => {
     clearTerminal();
     const code = editor.getValue();
     const language = languageSelect.value;
-    checkErrors(code, language);
+    await checkErrors(code, language);
   });
 
   // Function to execute code using Gemini API
   async function executeCode(code, language) {
-    const prompt = `Execute the following ${language} code and provide the output:\n${code}`;
+    const prompt = `Execute the following ${language} code and provide the output. If the code requires user input, simulate it:\n${code}`;
     const response = await callGeminiAPI(prompt);
     appendToTerminal(response);
   }
@@ -120,5 +120,13 @@ require(['vs/editor/editor.main'], function() {
     } catch (error) {
       return `Failed to fetch: ${error.message}`;
     }
+  }
+
+  // Function to simulate user input
+  async function getUserInput(prompt) {
+    return new Promise((resolve) => {
+      const input = window.prompt(prompt);
+      resolve(input);
+    });
   }
 });
