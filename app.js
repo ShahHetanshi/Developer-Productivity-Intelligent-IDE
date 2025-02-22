@@ -18,13 +18,8 @@ require(['vs/editor/editor.main'], function() {
   }
 
   // Function to append text to terminal
-  function appendToTerminal(text, className = '') {
-    const line = document.createElement('div');
-    line.textContent = text;
-    if (className) {
-      line.className = className;
-    }
-    outputElement.appendChild(line);
+  function appendToTerminal(text) {
+    outputElement.textContent += text + '\n';
     outputElement.scrollTop = outputElement.scrollHeight; // Auto-scroll
   }
 
@@ -57,12 +52,13 @@ require(['vs/editor/editor.main'], function() {
   }
 
   // Run button functionality
-  document.getElementById('run-button').addEventListener('click', async () => {
+  document.getElementById('run-button').addEventListener('click', async (event) => {
+    event.preventDefault();
     clearTerminal();
     const code = editor.getValue();
     const language = languageSelect.value;
-    await executeCode(code, language);
-  });
+    await RunInBackend(code, language);
+});
 
   // Debug button functionality
   document.getElementById('debug-button').addEventListener('click', async () => {
@@ -80,7 +76,6 @@ require(['vs/editor/editor.main'], function() {
     await checkErrors(code, language);
   });
 
-  // Run Test button functionality
   document.getElementById('run-test-button').addEventListener('click', async () => {
     clearTerminal();
     const code = editor.getValue();
@@ -90,13 +85,6 @@ require(['vs/editor/editor.main'], function() {
     await runTest(code, language, customInput, expectedOutput);
   });
 
-  // Function to execute code using Gemini API
-  async function executeCode(code, language) {
-    const prompt = `Execute the following ${language} code and provide the output. If the code requires user input, simulate it:\n${code}`;
-    const response = await callGeminiAPI(prompt);
-    appendToTerminal(response);
-  }
-
   // Function to debug code using Gemini API
   async function debugCode(code, language) {
     const prompt = `Debug the following ${language} code and provide suggestions:\n${code}`;
@@ -104,7 +92,7 @@ require(['vs/editor/editor.main'], function() {
     appendToTerminal(`[Debug] ${response}`);
   }
 
-  // Function to check for errors using Gemini API
+  // Function to check errors using Gemini API
   async function checkErrors(code, language) {
     const prompt = `Check the following ${language} code for errors and provide fixes:\n${code}`;
     const response = await callGeminiAPI(prompt);
@@ -113,21 +101,19 @@ require(['vs/editor/editor.main'], function() {
 
   // Function to run test using Gemini API
   async function runTest(code, language, customInput, expectedOutput) {
-    const prompt = `Execute the following ${language} code with the provided input and return only the output:\nCode:\n${code}\nInput:\n${customInput}`;
-    const actualOutput = await callGeminiAPI(prompt);
-
+    clearTerminal();
+    
     // Trim whitespace and compare
-    const actualOutputTrimmed = actualOutput.trim();
-    const expectedOutputTrimmed = expectedOutput.trim();
-
+    const actualOutput = await RunInBackend(code, language,customInput);
+  
     // Check if the expected output is contained within the actual output
-    const isMatch = actualOutputTrimmed.includes(expectedOutputTrimmed);
+    const isMatch = actualOutput.replace(/\r\n/g, '\n') === expectedOutput.replace(/\r\n/g, '\n');
 
     // Display result with tick or cross
     appendToTerminal(`[Test Result]`);
-    appendToTerminal(`Actual Output:\n${actualOutputTrimmed}`);
-    appendToTerminal(`Expected Output:\n${expectedOutputTrimmed}`);
-    appendToTerminal(`Result: ${isMatch ? '✔' : '✗'}`, isMatch ? 'terminal-success' : 'terminal-failure');
+    appendToTerminal(`Actual Output:\n${actualOutput}`);
+    appendToTerminal(`Expected Output:\n${expectedOutput}`);
+    appendToTerminal(`Result: ${isMatch ? '✅' : '❌'}`, isMatch ? 'terminal-success' : 'terminal-failure');
   }
 
   // Function to call Gemini API
@@ -142,11 +128,7 @@ require(['vs/editor/editor.main'], function() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt,
-            }],
-          }],
+          contents: [{ parts: [{ text: prompt }] }],
         }),
       });
       const data = await response.json();
@@ -156,11 +138,26 @@ require(['vs/editor/editor.main'], function() {
     }
   }
 
-  // Function to simulate user input
-  async function getUserInput(prompt) {
-    return new Promise((resolve) => {
-      const input = window.prompt(prompt);
-      resolve(input);
-    });
+  async function RunInBackend(code, language, input) {
+    // console.log("Running code in backend:", { code, language });
+    try {
+      const response = await fetch("http://localhost:3000/execute-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, language, input })
+      });
+  
+      const data = await response.json();
+      if (data.output) {
+        return data.output;
+      }
+      else{
+        appendToTerminal("No output received.");
+      }
+    } catch (error) {
+      appendToTerminal(`⚠️ Failed to run code: ${error.message}`);
+    }
   }
+  // Run showErrors on start
+  // showErrors();
 });

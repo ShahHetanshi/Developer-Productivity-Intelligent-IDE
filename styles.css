@@ -1,4 +1,11 @@
-body, html {
+/* Add to styles.css */
+.terminal-success {
+  color: green;
+}
+
+.terminal-failure {
+  color: red;
+}body, html {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -65,7 +72,6 @@ body, html {
   box-sizing: border-box;
   resize: none;
 }
-/* Add to styles.css */
 .terminal-success {
   color: green;
 }
