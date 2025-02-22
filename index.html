@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Intelligent IDE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="toolbar">
+    <select id="language-select">
+      <option value="python">Python</option>
+      <option value="cpp">C++</option>
+      <option value="c">C</option>
+      <option value="java">Java</option>
+      <option value="javascript">JavaScript</option>
+      <option value="typescript">TypeScript</option>
+    </select>
+    <button id="run-button">Run</button>
+    <button id="debug-button">Debug</button>
+    <button id="show-errors-button">Show Errors</button>
+  </div>
+  <div id="editor"></div>
+  <div id="terminal">
+    <pre id="output"></pre>
+  </div>
+  <script src="https://unpkg.com/monaco-editor@0.33.0/min/vs/loader.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
