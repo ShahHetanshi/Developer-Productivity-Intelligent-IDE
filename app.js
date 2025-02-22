@@ -18,8 +18,13 @@ require(['vs/editor/editor.main'], function() {
   }
 
   // Function to append text to terminal
-  function appendToTerminal(text) {
-    outputElement.textContent += text + '\n';
+  function appendToTerminal(text, className = '') {
+    const line = document.createElement('div');
+    line.textContent = text;
+    if (className) {
+      line.className = className;
+    }
+    outputElement.appendChild(line);
     outputElement.scrollTop = outputElement.scrollHeight; // Auto-scroll
   }
 
@@ -75,6 +80,16 @@ require(['vs/editor/editor.main'], function() {
     await checkErrors(code, language);
   });
 
+  // Run Test button functionality
+  document.getElementById('run-test-button').addEventListener('click', async () => {
+    clearTerminal();
+    const code = editor.getValue();
+    const language = languageSelect.value;
+    const customInput = document.getElementById('custom-input').value;
+    const expectedOutput = document.getElementById('expected-output').value;
+    await runTest(code, language, customInput, expectedOutput);
+  });
+
   // Function to execute code using Gemini API
   async function executeCode(code, language) {
     const prompt = `Execute the following ${language} code and provide the output. If the code requires user input, simulate it:\n${code}`;
@@ -94,6 +109,25 @@ require(['vs/editor/editor.main'], function() {
     const prompt = `Check the following ${language} code for errors and provide fixes:\n${code}`;
     const response = await callGeminiAPI(prompt);
     appendToTerminal(`[Errors] ${response}`);
+  }
+
+  // Function to run test using Gemini API
+  async function runTest(code, language, customInput, expectedOutput) {
+    const prompt = `Execute the following ${language} code with the provided input and return only the output:\nCode:\n${code}\nInput:\n${customInput}`;
+    const actualOutput = await callGeminiAPI(prompt);
+
+    // Trim whitespace and compare
+    const actualOutputTrimmed = actualOutput.trim();
+    const expectedOutputTrimmed = expectedOutput.trim();
+
+    // Check if the expected output is contained within the actual output
+    const isMatch = actualOutputTrimmed.includes(expectedOutputTrimmed);
+
+    // Display result with tick or cross
+    appendToTerminal(`[Test Result]`);
+    appendToTerminal(`Actual Output:\n${actualOutputTrimmed}`);
+    appendToTerminal(`Expected Output:\n${expectedOutputTrimmed}`);
+    appendToTerminal(`Result: ${isMatch ? '✔' : '✗'}`, isMatch ? 'terminal-success' : 'terminal-failure');
   }
 
   // Function to call Gemini API
