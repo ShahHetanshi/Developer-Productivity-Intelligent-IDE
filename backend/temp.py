@@ -1,2 +1,3 @@
-// Welcome to Simple Intelligent IDE!
-console.log("Hello, World!");
+# Welcome to Python!
+name = input("Enter your name: ")
+print("Hello, " + name)

@@ -43,9 +43,13 @@ require(['vs/editor/editor.main'], function() {
       case 'java':
         return `// Welcome to Java!\nimport java.util.Scanner;\npublic class Main {\n  public static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    System.out.print("Enter a number: ");\n    int num = scanner.nextInt();\n    System.out.println("You entered: " + num);\n  }\n}`;
       case 'javascript':
-        return `// Welcome to JavaScript!\nconst name = prompt("Enter your name:");\nconsole.log("Hello, " + name);`;
+        return `// Welcome to Javascript!\nconst fs = require('fs');
+const input = fs.readFileSync(0, 'utf-8'); // Read from stdin
+console.log(input)`;
       case 'typescript':
-        return `// Welcome to TypeScript!\nconst name: string | null = prompt("Enter your name:");\nconsole.log("Hello, " + name);`;
+        return `// Welcome to Typescript!\nconst fs = require('fs');
+const input = fs.readFileSync(0, 'utf-8'); // Read from stdin
+console.log(input)`;
       default:
         return `// Unsupported language`;
     }
@@ -99,7 +103,7 @@ require(['vs/editor/editor.main'], function() {
     appendToTerminal(`[Errors] ${response}`);
   }
 
-  // Function to run test using Gemini API
+  // Function to run test using Server
   async function runTest(code, language, customInput, expectedOutput) {
     clearTerminal();
     
@@ -150,6 +154,9 @@ require(['vs/editor/editor.main'], function() {
       const data = await response.json();
       if (data.output) {
         return data.output;
+      }
+      else if(data.error) {
+        return data.error;
       }
       else{
         appendToTerminal("No output received.");
