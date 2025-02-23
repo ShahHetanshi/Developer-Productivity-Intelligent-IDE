@@ -15,16 +15,37 @@ require(['vs/editor/editor.main'], function () {
 
   // Terminal output element
   const outputElement = document.getElementById('output');
+  const terminalContainer = document.getElementById('terminal');
 
-  // Function to clear terminal
-  function clearTerminal() {
-      outputElement.textContent = '';
-  }
+  // Scroll buttons
+  const scrollUpButton = document.getElementById('scroll-up');
+  const scrollDownButton = document.getElementById('scroll-down');
+
+  // Function to scroll terminal up
+  scrollUpButton.addEventListener('click', () => {
+      terminalContainer.scrollBy({
+          top: -50, // Scroll up by 50px
+          behavior: 'smooth', // Smooth scrolling
+      });
+  });
+
+  // Function to scroll terminal down
+  scrollDownButton.addEventListener('click', () => {
+      terminalContainer.scrollBy({
+          top: 50, // Scroll down by 50px
+          behavior: 'smooth', // Smooth scrolling
+      });
+  });
 
   // Function to append text to terminal
   function appendToTerminal(text) {
       outputElement.textContent += text + '\n';
-      outputElement.scrollTop = outputElement.scrollHeight; // Auto-scroll
+      terminalContainer.scrollTop = terminalContainer.scrollHeight; // Auto-scroll to bottom
+  }
+
+  // Function to clear terminal
+  function clearTerminal() {
+      outputElement.textContent = '';
   }
 
   // Language selector
