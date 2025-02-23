@@ -1,16 +1,16 @@
 require.config({
   paths: {
-      vs: 'https://unpkg.com/monaco-editor@0.33.0/min/vs',
+    vs: 'https://unpkg.com/monaco-editor@0.33.0/min/vs',
   },
 });
 
 require(['vs/editor/editor.main'], function () {
   // Initialize Monaco Editor
   const editor = monaco.editor.create(document.getElementById('editor'), {
-      value: `// Welcome to Simple Intelligent IDE!\nconsole.log("Hello, World!");`,
-      language: 'javascript',
-      theme: 'vs-dark',
-      automaticLayout: true,
+    value: `// Welcome to Simple Intelligent IDE!\nconsole.log("Hello, World!");`,
+    language: 'javascript',
+    theme: 'vs-dark',
+    automaticLayout: true,
   });
 
   // Terminal output element
@@ -23,167 +23,182 @@ require(['vs/editor/editor.main'], function () {
 
   // Function to scroll terminal up
   scrollUpButton.addEventListener('click', () => {
-      terminalContainer.scrollBy({
-          top: -50, // Scroll up by 50px
-          behavior: 'smooth', // Smooth scrolling
-      });
+    terminalContainer.scrollBy({
+      top: -50,
+      behavior: 'smooth',
+    });
   });
 
   // Function to scroll terminal down
   scrollDownButton.addEventListener('click', () => {
-      terminalContainer.scrollBy({
-          top: 50, // Scroll down by 50px
-          behavior: 'smooth', // Smooth scrolling
-      });
+    terminalContainer.scrollBy({
+      top: 50,
+      behavior: 'smooth',
+    });
   });
 
   // Function to append text to terminal
-  function appendToTerminal(text) {
-      outputElement.textContent += text + '\n';
-      terminalContainer.scrollTop = terminalContainer.scrollHeight; // Auto-scroll to bottom
+  function appendToTerminal(text, className = '') {
+    const line = document.createElement('div');
+    line.textContent = text;
+    line.className = className;
+    outputElement.appendChild(line);
+    terminalContainer.scrollTop = terminalContainer.scrollHeight;
   }
 
   // Function to clear terminal
   function clearTerminal() {
-      outputElement.textContent = '';
+    outputElement.innerHTML = '';
   }
 
   // Language selector
   const languageSelect = document.getElementById('language-select');
   languageSelect.addEventListener('change', () => {
-      const language = languageSelect.value;
-      editor.getModel().setValue(getDefaultCode(language));
-      monaco.editor.setModelLanguage(editor.getModel(), language);
+    const language = languageSelect.value;
+    editor.getModel().setValue(getDefaultCode(language));
+    monaco.editor.setModelLanguage(editor.getModel(), language);
   });
 
   // Default code for each language
   function getDefaultCode(language) {
-      switch (language) {
-          case 'python':
-              return `# Welcome to Python!\nname = input("Enter your name: ")\nprint("Hello, " + name)`;
-          case 'cpp':
-              return `// Welcome to C++!\n#include <iostream>\nusing namespace std;\nint main() {\n    int num;\n    cout << "Enter a number: ";\n    cin >> num;\n    cout << "You entered: " << num << endl;\n    return 0;\n}`;
-          case 'c':
-              return `// Welcome to C!\n#include <stdio.h>\nint main() {\n    int num;\n    printf("Enter a number: ");\n    scanf("%d", &num);\n    printf("You entered: %d\\n", num);\n    return 0;\n}`;
-          case 'java':
-              return `// Welcome to Java!\nimport java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        System.out.print("Enter a number: ");\n        int num = scanner.nextInt();\n        System.out.println("You entered: " + num);\n    }\n}`;
-          case 'javascript':
-              return `// Welcome to Javascript!\nconst fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8'); // Read from stdin\nconsole.log(input)`;
-          case 'typescript':
-              return `// Welcome to Typescript!\nconst fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8'); // Read from stdin\nconsole.log(input)`;
-          default:
-              return `// Unsupported language`;
-      }
+    switch (language) {
+      case 'python':
+        return `# Welcome to Python!\nname = input("Enter your name: ")\nprint("Hello, " + name)`;
+      case 'cpp':
+        return `// Welcome to C++!\n#include <iostream>\nusing namespace std;\nint main() {\n    int num;\n    cout << "Enter a number: ";\n    cin >> num;\n    cout << "You entered: " << num << endl;\n    return 0;\n}`;
+      case 'c':
+        return `// Welcome to C!\n#include <stdio.h>\nint main() {\n    int num;\n    printf("Enter a number: ");\n    scanf("%d", &num);\n    printf("You entered: %d\\n", num);\n    return 0;\n}`;
+      case 'java':
+        return `// Welcome to Java!\nimport java.util.Scanner;\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        System.out.print("Enter a number: ");\n        int num = scanner.nextInt();\n        System.out.println("You entered: " + num);\n    }\n}`;
+      case 'javascript':
+        return `// Welcome to Javascript!\nconst fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8'); // Read from stdin\nconsole.log(input)`;
+      case 'typescript':
+        return `// Welcome to Typescript!\nconst fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8'); // Read from stdin\nconsole.log(input)`;
+      default:
+        return `// Unsupported language`;
+    }
   }
 
   // Run button functionality
   document.getElementById('run-button').addEventListener('click', async (event) => {
-      event.preventDefault();
-      clearTerminal();
-      const code = editor.getValue();
-      const language = languageSelect.value;
-      await RunInBackend(code, language);
+    event.preventDefault();
+    clearTerminal();
+    const code = editor.getValue();
+    const language = languageSelect.value;
+    await RunInBackend(code, language);
   });
 
   // Debug button functionality
   document.getElementById('debug-button').addEventListener('click', async () => {
-      clearTerminal();
-      const code = editor.getValue();
-      const language = languageSelect.value;
-      await debugCode(code, language);
+    clearTerminal();
+    const code = editor.getValue();
+    const language = languageSelect.value;
+    await debugCode(code, language);
   });
 
   // Show Errors button functionality
   document.getElementById('show-errors-button').addEventListener('click', async () => {
-      clearTerminal();
-      const code = editor.getValue();
-      const language = languageSelect.value;
-      await checkErrors(code, language);
+    clearTerminal();
+    const code = editor.getValue();
+    const language = languageSelect.value;
+    await checkErrors(code, language);
   });
 
   // Run Test button functionality
   document.getElementById('run-test-button').addEventListener('click', async () => {
-      clearTerminal();
-      const code = editor.getValue();
-      const language = languageSelect.value;
-      const customInput = document.getElementById('custom-input').value;
-      const expectedOutput = document.getElementById('expected-output').value;
-      await runTest(code, language, customInput, expectedOutput);
+    clearTerminal();
+    const code = editor.getValue();
+    const language = languageSelect.value;
+    const customInput = document.getElementById('custom-input').value;
+    const expectedOutput = document.getElementById('expected-output').value;
+    await runTest(code, language, customInput, expectedOutput);
   });
 
-  // Function to debug code using Gemini API
+  // Function to debug code using AI
   async function debugCode(code, language) {
-      const prompt = `Debug the following ${language} code and provide suggestions:\n${code}`;
-      const response = await callGeminiAPI(prompt);
-      appendToTerminal(`[Debug] ${response}`);
+    const prompt = `Debug the following ${language} code and provide suggestions:\n${code}`;
+    const response = await callGeminiAPI(prompt);
+    appendToTerminal(`[Debug] ${response}`);
+
+    // Automatically apply fixes if user confirms
+    const applyFix = confirm("Do you want to apply the suggested fixes?");
+    if (applyFix) {
+      const fixedCode = extractFixedCode(response);
+      editor.setValue(fixedCode);
+      appendToTerminal("✅ Fixes applied successfully.", 'terminal-success');
+    }
   }
 
-  // Function to check errors using Gemini API
+  // Function to extract fixed code from AI response
+  function extractFixedCode(response) {
+    const codeBlockRegex = /```[\s\S]*?```/g;
+    const matches = response.match(codeBlockRegex);
+    if (matches) {
+      return matches[0].replace(/```/g, "").trim();
+    }
+    return response;
+  }
+
+  // Function to check errors using AI
   async function checkErrors(code, language) {
-      const prompt = `Check the following ${language} code for errors and provide fixes:\n${code}`;
-      const response = await callGeminiAPI(prompt);
-      appendToTerminal(`[Errors] ${response}`);
+    const prompt = `Check the following ${language} code for errors and provide fixes:\n${code}`;
+    const response = await callGeminiAPI(prompt);
+    appendToTerminal(`[Errors] ${response}`);
   }
 
-  // Function to run test using Server
+  // Function to run test
   async function runTest(code, language, customInput, expectedOutput) {
-      clearTerminal();
-
-      // Trim whitespace and compare
-      const actualOutput = await RunInBackend(code, language, customInput);
-
-      // Check if the expected output is contained within the actual output
-      const isMatch = actualOutput.replace(/\r\n/g, '\n') === expectedOutput.replace(/\r\n/g, '\n');
-
-      // Display result with tick or cross
-      appendToTerminal(`[Test Result]`);
-      appendToTerminal(`Actual Output:\n${actualOutput}`);
-      appendToTerminal(`Expected Output:\n${expectedOutput}`);
-      appendToTerminal(`Result: ${isMatch ? '✅' : '❌'}`, isMatch ? 'terminal-success' : 'terminal-failure');
+    clearTerminal();
+    const actualOutput = await RunInBackend(code, language, customInput);
+    const isMatch = actualOutput.replace(/\r\n/g, '\n') === expectedOutput.replace(/\r\n/g, '\n');
+    appendToTerminal(`[Test Result]`);
+    appendToTerminal(`Actual Output:\n${actualOutput}`);
+    appendToTerminal(`Expected Output:\n${expectedOutput}`);
+    appendToTerminal(`Result: ${isMatch ? '✅' : '❌'}`, isMatch ? 'terminal-success' : 'terminal-failure');
   }
 
   // Function to call Gemini API
   async function callGeminiAPI(prompt) {
-      const apiKey = 'AIzaSyDoJxXE4EjKBYGj6q9JbwnTMBDR8WClFUc'; // Replace with your Gemini API key
-      const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    const apiKey = 'AIzaSyDoJxXE4EjKBYGj6q9JbwnTMBDR8WClFUc'; // Replace with your Gemini API key
+    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
-      try {
-          const response = await fetch(`${apiUrl}?key=${apiKey}`, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                  contents: [{ parts: [{ text: prompt }] }],
-              }),
-          });
-          const data = await response.json();
-          return data.candidates[0].content.parts[0].text.trim();
-      } catch (error) {
-          return `Failed to fetch: ${error.message}`;
-      }
+    try {
+      const response = await fetch(`${apiUrl}?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      });
+      const data = await response.json();
+      return data.candidates[0].content.parts[0].text.trim();
+    } catch (error) {
+      return `Failed to fetch: ${error.message}`;
+    }
   }
 
   // Function to execute code in the backend
   async function RunInBackend(code, language, input) {
-      try {
-          const response = await fetch('http://localhost:3000/execute-code', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ code, language, input }),
-          });
+    try {
+      const response = await fetch('http://localhost:3000/execute-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, language, input }),
+      });
 
-          const data = await response.json();
-          if (data.output) {
-              return data.output;
-          } else if (data.error) {
-              return data.error;
-          } else {
-              appendToTerminal('No output received.');
-          }
-      } catch (error) {
-          appendToTerminal(`⚠️ Failed to run code: ${error.message}`);
+      const data = await response.json();
+      if (data.output) {
+        return data.output;
+      } else if (data.error) {
+        return data.error;
+      } else {
+        appendToTerminal('No output received.');
       }
+    } catch (error) {
+      appendToTerminal(`⚠️ Failed to run code: ${error.message}`);
+    }
   }
 
   // AI Code Generation Sidebar
@@ -197,45 +212,40 @@ require(['vs/editor/editor.main'], function () {
 
   // Toggle sidebar visibility
   aiCodeButton.addEventListener('click', () => {
-      console.log('Toggling sidebar');
-      aiSidebar.classList.toggle('active');
+    aiSidebar.classList.toggle('active');
   });
 
   // Handle AI code generation
   aiSubmitButton.addEventListener('click', async (event) => {
-      event.stopPropagation(); // Prevent event propagation
-      console.log('AI Submit button clicked');
-      const prompt = aiPrompt.value;
-      if (!prompt) {
-          alert('Please enter a prompt.');
-          return;
-      }
+    event.stopPropagation();
+    const prompt = aiPrompt.value;
+    if (!prompt) {
+      alert('Please enter a prompt.');
+      return;
+    }
 
-      const language = languageSelect.value;
-      const aiPromptText = `Generate ${language} code for: ${prompt}`;
-      const generatedCode = await callGeminiAPI(aiPromptText);
+    const language = languageSelect.value;
+    const aiPromptText = `Generate ${language} code for: ${prompt}`;
+    const generatedCode = await callGeminiAPI(aiPromptText);
 
-      if (generatedCode) {
-          aiGeneratedCode.textContent = generatedCode;
-          // Do not close the sidebar here
-      }
+    if (generatedCode) {
+      aiGeneratedCode.textContent = generatedCode;
+    }
   });
 
   // Copy generated code to clipboard
   aiCopyButton.addEventListener('click', (event) => {
-      event.stopPropagation(); // Prevent event propagation
-      console.log('AI Copy button clicked');
-      const code = aiGeneratedCode.textContent;
-      navigator.clipboard.writeText(code).then(() => {
-          alert('Code copied to clipboard!');
-      });
+    event.stopPropagation();
+    const code = aiGeneratedCode.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      alert('Code copied to clipboard!');
+    });
   });
 
   // Edit generated code
   aiEditButton.addEventListener('click', (event) => {
-      event.stopPropagation(); // Prevent event propagation
-      console.log('AI Edit button clicked');
-      editor.setValue(aiGeneratedCode.textContent);
-      aiSidebar.classList.remove('active'); // Close sidebar after editing
+    event.stopPropagation();
+    editor.setValue(aiGeneratedCode.textContent);
+    aiSidebar.classList.remove('active');
   });
 });

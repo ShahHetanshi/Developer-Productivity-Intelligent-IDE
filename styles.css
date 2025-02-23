@@ -66,7 +66,7 @@ body, html {
   box-sizing: border-box;
   overflow-y: auto;
   border-top: 1px solid #333;
-  position: relative; /* Required for absolute positioning of buttons */
+  position: relative;
 }
 
 #output {
@@ -75,14 +75,15 @@ body, html {
   font-size: 14px;
   color: #00ff00;
 }
-  /* Scroll Buttons */
+
+/* Scroll Buttons */
 #terminal-scroll-buttons {
-  position: fixed; /* Change to fixed positioning */
-  bottom: 20px; /* Adjust as needed */
-  right: 20px; /* Adjust as needed */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
   display: flex;
   gap: 5px;
-  z-index: 1000; /* Ensure buttons are above other content */
+  z-index: 1000;
 }
 
 #terminal-scroll-buttons button {
@@ -99,7 +100,6 @@ body, html {
 #terminal-scroll-buttons button:hover {
   background-color: #005f99;
 }
-
 
 /* Test Panel Styles */
 #test-panel {
