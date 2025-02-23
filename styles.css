@@ -1,57 +1,81 @@
-/* Add to styles.css */
-.terminal-success {
-  color: green;
-}
-
-.terminal-failure {
-  color: red;
-}body, html {
+/* General Styles */
+body, html {
   margin: 0;
   padding: 0;
   height: 100%;
   overflow: hidden;
-  font-family: Arial, sans-serif;
+  font-family: 'Arial', sans-serif;
+  background-color: #1e1e1e;
+  color: #ffffff;
 }
 
+/* Toolbar Styles */
 #toolbar {
   padding: 10px;
-  background-color: #1e1e1e;
+  background-color: #252526;
   display: flex;
   gap: 10px;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 #toolbar select, #toolbar button {
-  padding: 5px 10px;
+  padding: 8px 12px;
   background-color: #007acc;
   color: #fff;
   border: none;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
 #toolbar select:hover, #toolbar button:hover {
   background-color: #005f99;
 }
 
-#editor {
-  width: 100%;
-  height: calc(60vh - 50px); /* Adjust height to leave space for the terminal and test panel */
+#toolbar select {
+  background-color: #333;
+  border: 1px solid #444;
 }
 
+#toolbar button#ai-code-button {
+  margin-left: auto;
+  background-color: #4CAF50;
+}
+
+#toolbar button#ai-code-button:hover {
+  background-color: #45a049;
+}
+
+/* Editor Styles */
+#editor {
+  width: 100%;
+  height: calc(60vh - 50px);
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #333;
+}
+
+/* Terminal Styles */
 #terminal {
   width: 100%;
   height: 20vh;
-  background-color: #1e1e1e;
+  background-color: #252526;
   color: #fff;
   padding: 10px;
   box-sizing: border-box;
   overflow-y: auto;
+  border-top: 1px solid #333;
 }
 
 #output {
   margin: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #00ff00;
 }
 
+/* Test Panel Styles */
 #test-panel {
   width: 100%;
   height: 20vh;
@@ -60,6 +84,7 @@
   box-sizing: border-box;
   display: flex;
   gap: 10px;
+  border-top: 1px solid #333;
 }
 
 #test-panel textarea {
@@ -67,15 +92,130 @@
   height: 100%;
   background-color: #1e1e1e;
   color: #fff;
-  border: 1px solid #007acc;
+  border: 1px solid #444;
   padding: 10px;
   box-sizing: border-box;
   resize: none;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
 }
+
+/* AI Sidebar Styles */
+#ai-sidebar {
+  width: 300px;
+  height: 100%;
+  background-color: #252526;
+  position: fixed;
+  top: 0;
+  right: -300px;
+  transition: right 0.3s ease;
+  z-index: 1000;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+#ai-sidebar.active {
+  right: 0;
+}
+
+#ai-sidebar-content {
+  padding: 20px;
+  color: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#ai-sidebar h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #4CAF50;
+}
+
+#ai-generated-code {
+  flex-grow: 1;
+  background-color: #1e1e1e;
+  border: 1px solid #444;
+  padding: 10px;
+  margin-bottom: 10px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+#ai-sidebar textarea {
+  width: 100%;
+  height: 100px;
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: none;
+  margin-bottom: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+#ai-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+#ai-sidebar button {
+  padding: 8px 12px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  flex-grow: 1;
+}
+
+#ai-sidebar button:hover {
+  background-color: #005f99;
+}
+
+#ai-sidebar button#ai-copy {
+  background-color: #4CAF50;
+}
+
+#ai-sidebar button#ai-copy:hover {
+  background-color: #45a049;
+}
+
+#ai-sidebar button#ai-edit {
+  background-color: #f39c12;
+}
+
+#ai-sidebar button#ai-edit:hover {
+  background-color: #e67e22;
+}
+
+/* Success and Failure Styles */
 .terminal-success {
-  color: green;
+  color: #4CAF50;
 }
 
 .terminal-failure {
-  color: red;
+  color: #e74c3c;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

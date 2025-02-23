@@ -43,13 +43,9 @@ require(['vs/editor/editor.main'], function() {
       case 'java':
         return `// Welcome to Java!\nimport java.util.Scanner;\npublic class Main {\n  public static void main(String[] args) {\n    Scanner scanner = new Scanner(System.in);\n    System.out.print("Enter a number: ");\n    int num = scanner.nextInt();\n    System.out.println("You entered: " + num);\n  }\n}`;
       case 'javascript':
-        return `// Welcome to Javascript!\nconst fs = require('fs');
-const input = fs.readFileSync(0, 'utf-8'); // Read from stdin
-console.log(input)`;
+        return `// Welcome to Javascript!\nconst fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8'); // Read from stdin\nconsole.log(input)`;
       case 'typescript':
-        return `// Welcome to Typescript!\nconst fs = require('fs');
-const input = fs.readFileSync(0, 'utf-8'); // Read from stdin
-console.log(input)`;
+        return `// Welcome to Typescript!\nconst fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8'); // Read from stdin\nconsole.log(input)`;
       default:
         return `// Unsupported language`;
     }
@@ -62,7 +58,7 @@ console.log(input)`;
     const code = editor.getValue();
     const language = languageSelect.value;
     await RunInBackend(code, language);
-});
+  });
 
   // Debug button functionality
   document.getElementById('debug-button').addEventListener('click', async () => {
@@ -111,7 +107,7 @@ console.log(input)`;
     const actualOutput = await RunInBackend(code, language,customInput);
   
     // Check if the expected output is contained within the actual output
-    const isMatch = actualOutput.replace(/\r\n/g, '\n') === expectedOutput.replace(/\r\n/g, '\n');
+    const isMatch = actualOutput.replace(/\r\n/g, '\n') === expectedOutput.replace(/\r\n/g, '\n');
 
     // Display result with tick or cross
     appendToTerminal(`[Test Result]`);
@@ -165,6 +161,50 @@ console.log(input)`;
       appendToTerminal(`⚠️ Failed to run code: ${error.message}`);
     }
   }
-  // Run showErrors on start
-  // showErrors();
+
+  // AI Code Generation Sidebar
+  const aiSidebar = document.getElementById('ai-sidebar');
+  const aiCodeButton = document.getElementById('ai-code-button');
+  const aiSubmitButton = document.getElementById('ai-submit');
+  const aiCopyButton = document.getElementById('ai-copy');
+  const aiEditButton = document.getElementById('ai-edit');
+  const aiPrompt = document.getElementById('ai-prompt');
+  const aiGeneratedCode = document.getElementById('ai-generated-code');
+
+  // Toggle sidebar visibility
+  aiCodeButton.addEventListener('click', () => {
+    aiSidebar.classList.toggle('active');
+  });
+
+  // Handle AI code generation
+  aiSubmitButton.addEventListener('click', async () => {
+    const prompt = aiPrompt.value;
+    if (!prompt) {
+      alert('Please enter a prompt.');
+      return;
+    }
+
+    const language = languageSelect.value;
+    const aiPromptText = `Generate ${language} code for: ${prompt}`;
+    const generatedCode = await callGeminiAPI(aiPromptText);
+
+    if (generatedCode) {
+      aiGeneratedCode.textContent = generatedCode;
+      aiSidebar.classList.remove('active');
+    }
+  });
+
+  // Copy generated code to clipboard
+  aiCopyButton.addEventListener('click', () => {
+    const code = aiGeneratedCode.textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      alert('Code copied to clipboard!');
+    });
+  });
+
+  // Edit generated code
+  aiEditButton.addEventListener('click', () => {
+    editor.setValue(aiGeneratedCode.textContent);
+    aiSidebar.classList.remove('active');
+  });
 });

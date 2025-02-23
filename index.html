@@ -20,6 +20,7 @@
     <button id="debug-button">Debug</button>
     <button id="show-errors-button">Show Errors</button>
     <button id="run-test-button">Run Test</button>
+    <button id="ai-code-button" style="margin-left: auto;">AI Generate Code</button>
   </div>
   <div id="editor"></div>
   <div id="terminal">
@@ -28,6 +29,18 @@
   <div id="test-panel">
     <textarea id="custom-input" placeholder="Custom Input"></textarea>
     <textarea id="expected-output" placeholder="Expected Output"></textarea>
+  </div>
+  <div id="ai-sidebar">
+    <div id="ai-sidebar-content">
+      <h3>AI Code Generator</h3>
+      <div id="ai-generated-code"></div>
+      <textarea id="ai-prompt" placeholder="Enter your prompt here..."></textarea>
+      <div id="ai-buttons">
+        <button id="ai-submit">Generate Code</button>
+        <button id="ai-copy">Copy Code</button>
+        <button id="ai-edit">Edit Code</button>
+      </div>
+    </div>
   </div>
   <script src="https://unpkg.com/monaco-editor@0.33.0/min/vs/loader.js"></script>
   <script src="app.js"></script>
