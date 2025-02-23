@@ -133,7 +133,86 @@ body, html {
   background-color: #1e1e1e;
   border-bottom: 1px solid #333;
 }
+/* Suggestion Panel Styles */
+#suggestion-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  background-color: #252526;
+  border: 1px solid #444;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none; /* Hidden by default */
+}
 
+#suggestion-panel h3 {
+  margin-top: 0;
+  font-size: 16px;
+  color: #4CAF50;
+}
+
+#suggestion-content {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #00ff00;
+  margin-bottom: 10px;
+  white-space: pre-wrap; /* Preserve formatting */
+}
+
+#suggestion-slider {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#suggestion-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+#apply-suggestion,
+#stop-suggestion {
+  padding: 5px 10px;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  flex-grow: 1;
+}
+
+#apply-suggestion {
+  background-color: #4CAF50;
+}
+
+#apply-suggestion:hover {
+  background-color: #45a049;
+}
+
+#stop-suggestion {
+  background-color: #e74c3c;
+}
+
+#stop-suggestion:hover {
+  background-color: #c0392b;
+}
+/* Restart Suggestions Button */
+#restart-suggestions-button {
+  padding: 8px 12px;
+  background-color: #f39c12;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+#restart-suggestions-button:hover {
+  background-color: #e67e22;
+}
 /* Terminal Styles */
 #terminal {
   width: 100%;
@@ -276,7 +355,55 @@ body, html {
   transition: background-color 0.3s ease;
   flex-grow: 1;
 }
+/* AI Toggle Switch */
+#ai-toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
 
+#ai-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#ai-slider {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+#ai-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+#ai-toggle:checked + #ai-slider {
+  background-color: #4CAF50;
+}
+
+#ai-toggle:checked + #ai-slider:before {
+  transform: translateX(20px);
+}
+
+#ai-toggle-label {
+  font-size: 14px;
+  color: #fff;
+}
 #ai-sidebar button:hover {
   background-color: #005f99;
 }

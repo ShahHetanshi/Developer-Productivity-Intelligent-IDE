@@ -18,7 +18,7 @@
         <option value="javascript">JavaScript</option>
         <option value="typescript">TypeScript</option>
         <option value="html">HTML</option>
-        <option value="css">CSS</option>
+        <!-- <option value="css">CSS</option> -->
         <option value="nodejs">Node.js</option>
         <option value="react">React</option>
         <option value="angular">Angular</option>
@@ -37,12 +37,22 @@
       <button id="run-test-button">Run Test</button>
       <button id="deploy-button">Deploy</button>
       <button id="ai-code-button">AI Generate Code</button>
+      <button id="restart-suggestions-button" style="display: none;">Restart Suggestions</button>
     </div>
   
     <!-- Hamburger menu for mobile -->
     <button id="menu-toggle" aria-label="Toggle menu">☰</button>
   </div>
   <div id="editor"></div>
+  <div id="suggestion-panel">
+    <h3>AI Suggestions</h3>
+    <div id="suggestion-content"></div>
+    <input type="range" id="suggestion-slider" min="0" max="100" value="0">
+    <div id="suggestion-buttons">
+      <button id="apply-suggestion">Apply Suggestion</button>
+      <button id="stop-suggestion">Stop Suggestion</button>
+    </div>
+  </div>
   <div id="terminal">
     <pre id="output"></pre>
     <div id="terminal-scroll-buttons">
@@ -64,6 +74,11 @@
         <button id="ai-copy">Copy Code</button>
         <button id="ai-edit">Edit Code</button>
       </div>
+      <label id="ai-toggle-switch">
+        <input type="checkbox" id="ai-toggle" checked>
+        <span id="ai-slider"></span>
+        <span id="ai-toggle-label">Enable AI Code Generation</span>
+      </label>
     </div>
   </div>
   <script src="https://unpkg.com/monaco-editor@0.33.0/min/vs/loader.js"></script>

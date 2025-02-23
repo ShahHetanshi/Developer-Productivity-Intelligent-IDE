@@ -13,6 +13,125 @@ require(['vs/editor/editor.main'], function () {
     automaticLayout: true,
   });
 
+  // Suggestion panel elements
+  const suggestionPanel = document.getElementById('suggestion-panel');
+  const suggestionContent = document.getElementById('suggestion-content');
+  const suggestionSlider = document.getElementById('suggestion-slider');
+  const applySuggestionButton = document.getElementById('apply-suggestion');
+  const stopSuggestionButton = document.getElementById('stop-suggestion');
+  const restartSuggestionsButton = document.getElementById('restart-suggestions-button');
+  const aiToggle = document.getElementById('ai-toggle');
+
+  let originalCode = ''; // Store the original code
+  let aiSuggestion = ''; // Store the AI's suggestion
+  let isSuggestionsEnabled = true; // Flag to control AI suggestions
+
+  // Function to get AI suggestions
+  async function getAISuggestions(code) {
+    if (!isSuggestionsEnabled) return; // Stop if suggestions are disabled
+
+    const prompt = `Suggest improvements for the following code:\n${code}`;
+    const response = await callGeminiAPI(prompt); // Replace with your AI API call
+    return response;
+  }
+
+  // Function to call Gemini API
+  async function callGeminiAPI(prompt) {
+    const apiKey = 'AIzaSyDoJxXE4EjKBYGj6q9JbwnTMBDR8WClFUc'; // Replace with your Gemini API key
+    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+
+    try {
+      const response = await fetch(`${apiUrl}?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      });
+      const data = await response.json();
+      return data.candidates[0].content.parts[0].text.trim();
+    } catch (error) {
+      return `Failed to fetch suggestions: ${error.message}`;
+    }
+  }
+
+  // Listen for changes in the editor
+  editor.onDidChangeModelContent(async () => {
+    if (!isSuggestionsEnabled) return; // Stop if suggestions are disabled
+
+    const code = editor.getValue();
+
+    // Get AI suggestions
+    aiSuggestion = await getAISuggestions(code);
+    originalCode = code; // Store the original code
+
+    // Display suggestions
+    if (aiSuggestion) {
+      suggestionContent.textContent = aiSuggestion;
+      suggestionPanel.style.display = 'block';
+    } else {
+      suggestionPanel.style.display = 'none';
+    }
+  });
+
+  // Update the editor based on the slider value
+  suggestionSlider.addEventListener('input', () => {
+    const sliderValue = suggestionSlider.value / 100;
+
+    // Blend the original code with the AI suggestion
+    const blendedCode = blendCode(originalCode, aiSuggestion, sliderValue);
+    editor.setValue(blendedCode);
+  });
+
+  // Function to blend two code snippets
+  function blendCode(original, suggestion, ratio) {
+    const originalLines = original.split('\n');
+    const suggestionLines = suggestion.split('\n');
+
+    // Blend each line
+    const blendedLines = originalLines.map((line, index) => {
+      const suggestionLine = suggestionLines[index] || '';
+      return blendLine(line, suggestionLine, ratio);
+    });
+
+    return blendedLines.join('\n');
+  }
+
+  // Function to blend two lines of code
+  function blendLine(originalLine, suggestionLine, ratio) {
+    if (ratio === 0) return originalLine;
+    if (ratio === 1) return suggestionLine;
+
+    // Simple blending: choose one line based on the ratio
+    return Math.random() < ratio ? suggestionLine : originalLine;
+  }
+
+  // Apply suggestion
+  applySuggestionButton.addEventListener('click', () => {
+    suggestionPanel.style.display = 'none';
+  });
+
+  // Stop suggestions
+  stopSuggestionButton.addEventListener('click', () => {
+    isSuggestionsEnabled = false; // Disable suggestions
+    suggestionPanel.style.display = 'none'; // Hide the suggestion panel
+    editor.setValue(originalCode); // Reset the editor to the original code
+    appendToTerminal("🚫 AI suggestions stopped.");
+    restartSuggestionsButton.style.display = 'block'; // Show the restart button
+  });
+
+  // Restart suggestions
+  restartSuggestionsButton.addEventListener('click', () => {
+    const confirmRestart = confirm("Do you want to restart AI suggestions?");
+    if (confirmRestart) {
+      isSuggestionsEnabled = true; // Re-enable suggestions
+      restartSuggestionsButton.style.display = 'none'; // Hide the restart button
+      appendToTerminal("🔄 AI suggestions restarted.");
+    }
+  });
+
   // Terminal output element
   const outputElement = document.getElementById('output');
   const terminalContainer = document.getElementById('terminal');
