@@ -66,19 +66,19 @@
   </div>
   <div id="ai-sidebar">
     <div id="ai-sidebar-content">
+      <button id="ai-close-button" aria-label="Close sidebar"></button>
       <h3>AI Code Generator</h3>
       <div id="ai-generated-code"></div>
+      <div id="ai-toggle-container">
+        <label for="ai-toggle">Show in Main Code:</label>
+        <input type="checkbox" id="ai-toggle" checked>
+      </div>
       <textarea id="ai-prompt" placeholder="Enter your prompt here..."></textarea>
       <div id="ai-buttons">
         <button id="ai-submit">Generate Code</button>
         <button id="ai-copy">Copy Code</button>
         <button id="ai-edit">Edit Code</button>
       </div>
-      <label id="ai-toggle-switch">
-        <input type="checkbox" id="ai-toggle" checked>
-        <span id="ai-slider"></span>
-        <span id="ai-toggle-label">Enable AI Code Generation</span>
-      </label>
     </div>
   </div>
   <script src="https://unpkg.com/monaco-editor@0.33.0/min/vs/loader.js"></script>

@@ -355,54 +355,23 @@ body, html {
   transition: background-color 0.3s ease;
   flex-grow: 1;
 }
-/* AI Toggle Switch */
-#ai-toggle-switch {
+/* AI Toggle Container */
+#ai-toggle-container {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-#ai-toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-#ai-slider {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 20px;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 20px;
-  cursor: pointer;
-}
-
-#ai-slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 2px;
-  bottom: 2px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-#ai-toggle:checked + #ai-slider {
-  background-color: #4CAF50;
-}
-
-#ai-toggle:checked + #ai-slider:before {
-  transform: translateX(20px);
-}
-
-#ai-toggle-label {
+#ai-toggle-container label {
   font-size: 14px;
   color: #fff;
+}
+
+#ai-toggle {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 #ai-sidebar button:hover {
   background-color: #005f99;
@@ -423,7 +392,23 @@ body, html {
 #ai-sidebar button#ai-edit:hover {
   background-color: #e67e22;
 }
+/* Close Button for AI Sidebar */
+#ai-close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.3s ease;
+}
 
+#ai-close-button:hover {
+  color: #e74c3c; /* Red color on hover */
+}
 /* Success and Failure Styles */
 .terminal-success {
   color: #4CAF50;

@@ -20,7 +20,6 @@ require(['vs/editor/editor.main'], function () {
   const applySuggestionButton = document.getElementById('apply-suggestion');
   const stopSuggestionButton = document.getElementById('stop-suggestion');
   const restartSuggestionsButton = document.getElementById('restart-suggestions-button');
-  const aiToggle = document.getElementById('ai-toggle');
 
   let originalCode = ''; // Store the original code
   let aiSuggestion = ''; // Store the AI's suggestion
@@ -479,5 +478,22 @@ document.getElementById('save-file-button').addEventListener('click', () => {
   document.getElementById('menu-toggle').addEventListener('click', () => {
     const rightButtons = document.getElementById('right-buttons');
     rightButtons.classList.toggle('active');
+  });
+  // Toggle for showing AI-generated code in the main editor
+  const aiToggle = document.getElementById('ai-toggle');
+
+  // Handle AI-generated code edit button
+  aiEditButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (aiToggle.checked) {
+      editor.setValue(aiGeneratedCode.textContent);
+    }
+    aiSidebar.classList.remove('active');
+  });
+  // Close Button for AI Sidebar
+  const aiCloseButton = document.getElementById('ai-close-button');
+
+  aiCloseButton.addEventListener('click', () => {
+    aiSidebar.classList.remove('active'); // Hide the sidebar
   });
 });
