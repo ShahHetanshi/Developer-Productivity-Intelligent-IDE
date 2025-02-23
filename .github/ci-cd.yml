@@ -1,0 +1,39 @@
+# .github/workflows/ci-cd.yml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Trigger the pipeline when code is pushed to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu environment
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  # Specify the Node.js version
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run tests
+      - name: Run tests
+        run: npm test
+
+      # Step 5: Deploy to a staging environment (example)
+      - name: Deploy to staging
+        if: success()  # Only deploy if tests pass
+        run: |
+          echo "Deploying to staging..."
+          # Add your deployment commands here
+          # Example: Use SSH to deploy to a server
+          # ssh user@server 'cd /path/to/project && git pull && npm install && npm start'
