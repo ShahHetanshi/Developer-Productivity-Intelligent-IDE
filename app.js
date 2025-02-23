@@ -176,11 +176,14 @@ require(['vs/editor/editor.main'], function () {
 
   // Toggle sidebar visibility
   aiCodeButton.addEventListener('click', () => {
+      console.log('Toggling sidebar');
       aiSidebar.classList.toggle('active');
   });
 
   // Handle AI code generation
-  aiSubmitButton.addEventListener('click', async () => {
+  aiSubmitButton.addEventListener('click', async (event) => {
+      event.stopPropagation(); // Prevent event propagation
+      console.log('AI Submit button clicked');
       const prompt = aiPrompt.value;
       if (!prompt) {
           alert('Please enter a prompt.');
@@ -193,12 +196,14 @@ require(['vs/editor/editor.main'], function () {
 
       if (generatedCode) {
           aiGeneratedCode.textContent = generatedCode;
-          aiSidebar.classList.remove('active');
+          // Do not close the sidebar here
       }
   });
 
   // Copy generated code to clipboard
-  aiCopyButton.addEventListener('click', () => {
+  aiCopyButton.addEventListener('click', (event) => {
+      event.stopPropagation(); // Prevent event propagation
+      console.log('AI Copy button clicked');
       const code = aiGeneratedCode.textContent;
       navigator.clipboard.writeText(code).then(() => {
           alert('Code copied to clipboard!');
@@ -206,8 +211,10 @@ require(['vs/editor/editor.main'], function () {
   });
 
   // Edit generated code
-  aiEditButton.addEventListener('click', () => {
+  aiEditButton.addEventListener('click', (event) => {
+      event.stopPropagation(); // Prevent event propagation
+      console.log('AI Edit button clicked');
       editor.setValue(aiGeneratedCode.textContent);
-      aiSidebar.classList.remove('active');
+      aiSidebar.classList.remove('active'); // Close sidebar after editing
   });
 });
