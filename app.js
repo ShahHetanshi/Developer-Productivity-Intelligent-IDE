@@ -56,23 +56,31 @@ require(['vs/editor/editor.main'], function () {
     }
   }
 
-  // Listen for changes in the editor
+  // Listen for changes in the editor with a 10-second delay
   editor.onDidChangeModelContent(async () => {
     if (!isSuggestionsEnabled) return; // Stop if suggestions are disabled
 
     const code = editor.getValue();
 
-    // Get AI suggestions
-    aiSuggestion = await getAISuggestions(code);
-    originalCode = code; // Store the original code
-
-    // Display suggestions
-    if (aiSuggestion) {
-      suggestionContent.textContent = aiSuggestion;
-      suggestionPanel.style.display = 'block';
-    } else {
-      suggestionPanel.style.display = 'none';
+    // Clear any existing timeout to avoid multiple calls
+    if (window.suggestionTimeout) {
+      clearTimeout(window.suggestionTimeout);
     }
+
+    // Set a 5-second delay before fetching suggestions
+    window.suggestionTimeout = setTimeout(async () => {
+      // Get AI suggestions
+      aiSuggestion = await getAISuggestions(code);
+      originalCode = code; // Store the original code
+
+      // Display suggestions
+      if (aiSuggestion) {
+        suggestionContent.textContent = aiSuggestion;
+        suggestionPanel.style.display = 'block';
+      } else {
+        suggestionPanel.style.display = 'none';
+      }
+    }, 5000); // 5-second delay
   });
 
   // Update the editor based on the slider value
@@ -109,7 +117,7 @@ require(['vs/editor/editor.main'], function () {
 
   // Apply suggestion
   applySuggestionButton.addEventListener('click', () => {
-    suggestionPanel.style.display = 'none';
+    suggestionPanel.style.display = 'none'; // Hide the suggestion panel
   });
 
   // Stop suggestions
@@ -156,12 +164,16 @@ require(['vs/editor/editor.main'], function () {
   });
 
   // Function to append text to terminal
-  function appendToTerminal(text, className = '') {
-    const line = document.createElement('div');
-    line.textContent = text;
-    line.className = className;
-    outputElement.appendChild(line);
-    terminalContainer.scrollTop = terminalContainer.scrollHeight;
+  function appendToTerminal(text) {
+    // Convert URLs into clickable light blue links
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const formattedText = text.replace(urlRegex, (url) =>
+      `<a href="${url}" target="_blank" style="color: #4da6ff; text-decoration: underline;">${url}</a>`
+    );
+
+    // Append as HTML to allow links
+    outputElement.innerHTML += formattedText + '<br>';
+    outputElement.scrollTop = outputElement.scrollHeight; // Auto-scroll
   }
 
   // Function to clear terminal
@@ -215,7 +227,7 @@ require(['vs/editor/editor.main'], function () {
     clearTerminal();
     const code = editor.getValue();
     const language = languageSelect.value;
-    await RunInBackend(code, language);
+    await runTest(code, language);
   });
 
   // Debug button functionality
@@ -263,7 +275,7 @@ require(['vs/editor/editor.main'], function () {
       });
 
       const data = await response.json();
-      if (data.success) {
+      if (data.url) {
         appendToTerminal(`✅ Deployment successful: ${data.url}`, 'terminal-success');
       } else {
         appendToTerminal(`❌ Deployment failed: ${data.error}`, 'terminal-failure');
@@ -314,28 +326,6 @@ require(['vs/editor/editor.main'], function () {
     appendToTerminal(`Actual Output:\n${actualOutput}`);
     appendToTerminal(`Expected Output:\n${expectedOutput}`);
     appendToTerminal(`Result: ${isMatch ? '✅' : '❌'}`, isMatch ? 'terminal-success' : 'terminal-failure');
-  }
-
-  // Function to call Gemini API
-  async function callGeminiAPI(prompt) {
-    const apiKey = 'AIzaSyDoJxXE4EjKBYGj6q9JbwnTMBDR8WClFUc'; // Replace with your Gemini API key
-    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-
-    try {
-      const response = await fetch(`${apiUrl}?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
-      });
-      const data = await response.json();
-      return data.candidates[0].content.parts[0].text.trim();
-    } catch (error) {
-      return `Failed to fetch: ${error.message}`;
-    }
   }
 
   // Function to execute code in the backend
@@ -407,34 +397,35 @@ require(['vs/editor/editor.main'], function () {
     editor.setValue(aiGeneratedCode.textContent);
     aiSidebar.classList.remove('active');
   });
+
   // Function to create a new file
-document.getElementById('new-file-button').addEventListener('click', () => {
-  const language = languageSelect.value;
-  editor.setValue(getDefaultCode(language));
-  appendToTerminal("🆕 New file created.");
-});
+  document.getElementById('new-file-button').addEventListener('click', () => {
+    const language = languageSelect.value;
+    editor.setValue(getDefaultCode(language));
+    appendToTerminal("🆕 New file created.");
+  });
 
-// Function to save a file
-document.getElementById('save-file-button').addEventListener('click', () => {
-  const code = editor.getValue();
-  const language = languageSelect.value;
-  const filename = prompt("Enter file name (with extension):", `file.${language}`);
+  // Function to save a file
+  document.getElementById('save-file-button').addEventListener('click', () => {
+    const code = editor.getValue();
+    const language = languageSelect.value;
+    const filename = prompt("Enter file name (with extension):", `file.${language}`);
 
-  if (filename) {
-    // Save file using the File System API (for local saving)
-    const blob = new Blob([code], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
+    if (filename) {
+      // Save file using the File System API (for local saving)
+      const blob = new Blob([code], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
 
-    appendToTerminal(`💾 File saved as ${filename}`);
-  }
-});
+      appendToTerminal(`💾 File saved as ${filename}`);
+    }
+  });
 
-// Function to open a file
+  // Function to open a file
   document.getElementById('open-file-button').addEventListener('click', () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -474,25 +465,15 @@ document.getElementById('save-file-button').addEventListener('click', () => {
 
     input.click();
   });
+
   // Toggle menu for mobile
   document.getElementById('menu-toggle').addEventListener('click', () => {
     const rightButtons = document.getElementById('right-buttons');
     rightButtons.classList.toggle('active');
   });
-  // Toggle for showing AI-generated code in the main editor
-  const aiToggle = document.getElementById('ai-toggle');
 
-  // Handle AI-generated code edit button
-  aiEditButton.addEventListener('click', (event) => {
-    event.stopPropagation();
-    if (aiToggle.checked) {
-      editor.setValue(aiGeneratedCode.textContent);
-    }
-    aiSidebar.classList.remove('active');
-  });
   // Close Button for AI Sidebar
   const aiCloseButton = document.getElementById('ai-close-button');
-
   aiCloseButton.addEventListener('click', () => {
     aiSidebar.classList.remove('active'); // Hide the sidebar
   });
