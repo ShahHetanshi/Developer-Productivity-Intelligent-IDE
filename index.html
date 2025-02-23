@@ -8,19 +8,39 @@
 </head>
 <body>
   <div id="toolbar">
-    <select id="language-select">
-      <option value="python">Python</option>
-      <option value="cpp">C++</option>
-      <option value="c">C</option>
-      <option value="java">Java</option>
-      <option value="javascript">JavaScript</option>
-      <option value="typescript">TypeScript</option>
-    </select>
-    <button id="run-button">Run</button>
-    <button id="debug-button">Debug</button>
-    <button id="show-errors-button">Show Errors</button>
-    <button id="run-test-button">Run Test</button>
-    <button id="ai-code-button" style="margin-left: auto;">AI Generate Code</button>
+    <!-- Left-aligned buttons -->
+    <div id="left-buttons">
+      <select id="language-select">
+        <option value="python">Python</option>
+        <option value="cpp">C++</option>
+        <option value="c">C</option>
+        <option value="java">Java</option>
+        <option value="javascript">JavaScript</option>
+        <option value="typescript">TypeScript</option>
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+        <option value="nodejs">Node.js</option>
+        <option value="react">React</option>
+        <option value="angular">Angular</option>
+        <option value="vue">Vue</option>
+      </select>
+      <button id="new-file-button">New File</button>
+      <button id="open-file-button">Open File</button>
+      <button id="save-file-button">Save File</button>
+    </div>
+  
+    <!-- Right-aligned buttons -->
+    <div id="right-buttons">
+      <!-- <button id="run-button">Run</button> -->
+      <button id="debug-button">Debug</button>
+      <button id="show-errors-button">Show Errors</button>
+      <button id="run-test-button">Run Test</button>
+      <button id="deploy-button">Deploy</button>
+      <button id="ai-code-button">AI Generate Code</button>
+    </div>
+  
+    <!-- Hamburger menu for mobile -->
+    <button id="menu-toggle" aria-label="Toggle menu">☰</button>
   </div>
   <div id="editor"></div>
   <div id="terminal">

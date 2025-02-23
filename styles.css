@@ -10,13 +10,91 @@ body, html {
 }
 
 /* Toolbar Styles */
+/* Toolbar Styles */
 #toolbar {
   padding: 10px;
   background-color: #252526;
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+/* Left-aligned buttons */
+#left-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Right-aligned buttons */
+#right-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Button Styles */
+#toolbar button,
+#toolbar select {
+  padding: 8px 12px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+#toolbar button:hover,
+#toolbar select:hover {
+  background-color: #005f99;
+}
+
+/* Special styles for AI Generate Code button */
+#toolbar button#ai-code-button {
+  background-color: #4CAF50;
+}
+
+#toolbar button#ai-code-button:hover {
+  background-color: #45a049;
+}
+
+/* Hamburger menu (hidden by default) */
+#menu-toggle {
+  display: none; /* Hide on larger screens */
+  padding: 8px 12px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  /* Hide the right buttons and show the hamburger menu */
+  #right-buttons {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    background-color: #252526;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  #right-buttons.active {
+    display: flex; /* Show when active */
+  }
+
+  /* Show the hamburger menu */
+  #menu-toggle {
+    display: block;
+  }
 }
 
 #toolbar select, #toolbar button {

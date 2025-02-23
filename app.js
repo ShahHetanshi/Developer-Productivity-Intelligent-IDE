@@ -74,13 +74,25 @@ require(['vs/editor/editor.main'], function () {
         return `// Welcome to Javascript!\nconst fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8'); // Read from stdin\nconsole.log(input)`;
       case 'typescript':
         return `// Welcome to Typescript!\nconst fs = require('fs');\nconst input = fs.readFileSync(0, 'utf-8'); // Read from stdin\nconsole.log(input)`;
+      case 'html':
+        return `<!-- Welcome to HTML! -->\n<!DOCTYPE html>\n<html>\n<head>\n  <title>My Page</title>\n</head>\n<body>\n  <h1>Hello, World!</h1>\n</body>\n</html>`;
+      case 'css':
+        return `/* Welcome to CSS! */\nbody {\n  background-color: #1e1e1e;\n  color: #ffffff;\n}`;
+      case 'nodejs':
+        return `// Welcome to Node.js!\nconst http = require('http');\nconst server = http.createServer((req, res) => {\n  res.end('Hello, World!');\n});\nserver.listen(3000, () => {\n  console.log('Server running on port 3000');\n});`;
+      case 'react':
+        return `// Welcome to React!\nimport React from 'react';\nimport ReactDOM from 'react-dom';\n\nfunction App() {\n  return <h1>Hello, World!</h1>;\n}\n\nReactDOM.render(<App />, document.getElementById('root'));`;
+      case 'angular':
+        return `// Welcome to Angular!\nimport { Component } from '@angular/core';\n\n@Component({\n  selector: 'app-root',\n  template: '<h1>Hello, World!</h1>',\n})\nexport class AppComponent {}`;
+      case 'vue':
+        return `<!-- Welcome to Vue! -->\n<template>\n  <h1>Hello, World!</h1>\n</template>\n\n<script>\nexport default {\n  name: 'App',\n};\n</script>`;
       default:
         return `// Unsupported language`;
     }
   }
 
   // Run button functionality
-  document.getElementById('run-button').addEventListener('click', async (event) => {
+  document.getElementById('run-test-button').addEventListener('click', async (event) => {
     event.preventDefault();
     clearTerminal();
     const code = editor.getValue();
@@ -113,6 +125,35 @@ require(['vs/editor/editor.main'], function () {
     const expectedOutput = document.getElementById('expected-output').value;
     await runTest(code, language, customInput, expectedOutput);
   });
+
+  // Deploy button functionality
+  document.getElementById('deploy-button').addEventListener('click', async () => {
+    clearTerminal();
+    const code = editor.getValue();
+    const language = languageSelect.value;
+    appendToTerminal(`🚀 Deploying ${language} code...`);
+    await deployCode(code, language);
+  });
+
+  // Function to deploy code
+  async function deployCode(code, language) {
+    try {
+      const response = await fetch('http://localhost:3000/deploy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, language }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        appendToTerminal(`✅ Deployment successful: ${data.url}`, 'terminal-success');
+      } else {
+        appendToTerminal(`❌ Deployment failed: ${data.error}`, 'terminal-failure');
+      }
+    } catch (error) {
+      appendToTerminal(`⚠️ Failed to deploy: ${error.message}`, 'terminal-failure');
+    }
+  }
 
   // Function to debug code using AI
   async function debugCode(code, language) {
@@ -247,5 +288,77 @@ require(['vs/editor/editor.main'], function () {
     event.stopPropagation();
     editor.setValue(aiGeneratedCode.textContent);
     aiSidebar.classList.remove('active');
+  });
+  // Function to create a new file
+document.getElementById('new-file-button').addEventListener('click', () => {
+  const language = languageSelect.value;
+  editor.setValue(getDefaultCode(language));
+  appendToTerminal("🆕 New file created.");
+});
+
+// Function to save a file
+document.getElementById('save-file-button').addEventListener('click', () => {
+  const code = editor.getValue();
+  const language = languageSelect.value;
+  const filename = prompt("Enter file name (with extension):", `file.${language}`);
+
+  if (filename) {
+    // Save file using the File System API (for local saving)
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    appendToTerminal(`💾 File saved as ${filename}`);
+  }
+});
+
+// Function to open a file
+  document.getElementById('open-file-button').addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.txt,.js,.py,.html,.css,.java,.cpp,.c,.ts,.jsx,.tsx';
+
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target.result;
+          editor.setValue(content);
+
+          // Detect language based on file extension
+          const extension = file.name.split('.').pop();
+          const languageMap = {
+            js: 'javascript',
+            py: 'python',
+            html: 'html',
+            css: 'css',
+            java: 'java',
+            cpp: 'cpp',
+            c: 'c',
+            ts: 'typescript',
+            jsx: 'javascript',
+            tsx: 'typescript',
+          };
+          const language = languageMap[extension] || 'text';
+          languageSelect.value = language;
+          monaco.editor.setModelLanguage(editor.getModel(), language);
+
+          appendToTerminal(`📂 Opened file: ${file.name}`);
+        };
+        reader.readAsText(file);
+      }
+    };
+
+    input.click();
+  });
+  // Toggle menu for mobile
+  document.getElementById('menu-toggle').addEventListener('click', () => {
+    const rightButtons = document.getElementById('right-buttons');
+    rightButtons.classList.toggle('active');
   });
 });
