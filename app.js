@@ -802,6 +802,10 @@ require(['vs/editor/editor.main'], function () {
     console.log('Connected to WebSocket server');
   };
 
+  ws.onclose = () => {
+    console.log('WebSocket connection closed');
+  };
+
   // Handle incoming messages from the WebSocket server
   ws.onmessage = (event) => {
     const message = JSON.parse(event.data);
@@ -882,54 +886,51 @@ require(['vs/editor/editor.main'], function () {
     const joinButton = document.getElementById('join-session');
     const name = document.getElementById('name').value || "Anonymous";
     if (sessionId) {
-      if (joinButton.textContent === 'Join Session') {
+      if (joinButton.textContent === '👥 Join group') {
         const message = JSON.stringify({ type: 'joinSession', sessionId, name });
         ws.send(message);
-        joinButton.textContent = 'Leave Session';
+        joinButton.textContent = '👥 Join group';
       }
       else {
+        console.log("HETUMAAM");
         const message = JSON.stringify({ type: 'leaveSession', sessionId, name });
         ws.send(message);
         console.log('✅ Left session:', sessionId);
-        joinButton.textContent = 'Join Session';
+        joinButton.textContent = '👥 Join group';
       }
     } else {
       alert('Please enter a session ID.');
     }
   });
-});
 
-document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('collab-icon').addEventListener('click', function () {
-    const dropdown = document.getElementById('collab-dropdown');
-    dropdown.classList.toggle('show');
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('collab-icon').addEventListener('click', function () {
+      const dropdown = document.getElementById('collab-dropdown');
+      dropdown.classList.toggle('show');
+    });
+  
+    // Close the dropdown if clicked outside
+    window.addEventListener('click', function (event) {
+      const dropdown = document.getElementById('collab-dropdown');
+      if (!event.target.matches('#collab-icon') && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
   });
 
-  // Close the dropdown if clicked outside
-  window.addEventListener('click', function (event) {
-    const dropdown = document.getElementById('collab-dropdown');
-    if (!event.target.matches('#collab-icon') && !dropdown.contains(event.target)) {
-      dropdown.classList.remove('show');
+  // Get references to the collab button and dropdown
+  const collabButton = document.getElementById('collab-button');
+  const collabSession = document.getElementById('collab-session');
+
+  // Toggle collab dropdown visibility
+  collabButton.addEventListener('click', () => {
+    if (collabSession.style.display === 'none' || !collabSession.style.display) {
+      collabSession.style.display = 'block'; // Show the dropdown
+    } else {
+      collabSession.style.display = 'none'; // Hide the dropdown
     }
   });
 });
-// Get references to the collab button and dropdown
-const collabButton = document.getElementById('collab-button');
-const collabSession = document.getElementById('collab-session');
 
-// Toggle collab dropdown visibility
-collabButton.addEventListener('click', () => {
-  if (collabSession.style.display === 'none' || !collabSession.style.display) {
-    collabSession.style.display = 'block'; // Show the dropdown
-  } else {
-    collabSession.style.display = 'none'; // Hide the dropdown
-  }
-});
 
-// Hide dropdown when clicking outside
-document.addEventListener('click', (event) => {
-  if (!collabButton.contains(event.target) && !collabSession.contains(event.target)) {
-    collabSession.style.display = 'none'; // Hide the dropdown
-  }
-}); 
 

@@ -568,7 +568,7 @@ textarea {
 /* Collaboration Session Styles */
 #collab-session {
   position: absolute; /* Use fixed positioning to place it above the terminal */
-  top: 487px; /* Adjust this value to place it above the terminal */
+  top: 438.3px; /* Adjust this value to place it above the terminal */
   right: 14.3px; /* Adjust this value to align it properly */
   z-index: 1000;
   background-color: #252526;
@@ -580,7 +580,7 @@ textarea {
   border-radius: 0px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   display: none;
-  height: 17.39vh;
+  height: 17.2vh;
 }
 
 #collab-dropdown {
