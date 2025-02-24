@@ -716,182 +716,195 @@ require(['vs/editor/editor.main'], function () {
   makeDraggable(graphVisualizationContainer);
   // makeDraggable(drawingContainer);
 
-  // Connect to the WebSocket server
-  const ws = new WebSocket('ws://localhost:8080');
+  // Search Panel Elements
+  const codeSearchInput = document.getElementById('code-search-input');
+  const codeSearchButton = document.getElementById('code-search-button');
+  const searchResults = document.getElementById('search-results');
+  const searchPanel = document.getElementById('search-panel');
 
-  // Handle WebSocket connection
-  ws.onopen = () => {
-    console.log('Connected to WebSocket server');
-  };
+  // Function to handle code search
+  async function searchCode(query) {
+    try {
+      // Call the AI API to process the query
+      const response = await callGeminiAPI(`Find code helpers for: ${query}`);
+      const snippets = response.split('\n').filter(line => line.trim() !== '');
 
-  // Handle incoming messages from the WebSocket server
-  ws.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-    console.log(message)
-    if (message.type === 'codeUpdate' && message.source !== 'self') {
-      isRemoteUpdate = true;
-      document.getElementById('language-select').value = message.language;
-      languageSelect.dispatchEvent(new Event('change'));
-      editor.setValue(message.code); // Now update the code
-      isRemoteUpdate = false; // Reset the flag after the update
-  } else if (message.type === 'sessionCreated') {
-      // Notify the user that the session was created
-      appendToTerminal(`✅ Session created with ID: ${message.sessionId}`);
-      document.getElementById('session-id').value = message.sessionId; // Auto-fill the session ID
-    } else if (message.type === 'sessionJoined') {
-      // Notify the user that they joined a session
-      appendToTerminal(`✅ Joined session: ${message.sessionId}`);
-      document.getElementById('language-select').value = message.language;
+      // Display results
+      searchResults.innerHTML = '';
+      snippets.forEach(snippet => {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'search-result';
+        resultDiv.textContent = snippet;
+        resultDiv.addEventListener('click', () => {
+          editor.setValue(snippet); 
+        });
+        searchResults.appendChild(resultDiv);
+      });
+    } catch (error) {
+      appendToTerminal(`⚠️ Failed to search code: ${error.message}`);
     }
-  };
+  }
 
-  // Send code updates to the WebSocket server
-  // In app.js, modify the codeUpdate message to include the sessionId
-  // Debounce function
-  function throttle(func, limit) {
-    let inThrottle;
-    return function (...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
+  // Event listener for search button
+  codeSearchButton.addEventListener('click', () => {
+    const query = codeSearchInput.value.trim();
+    if (query) {
+      searchCode(query);
+    } else {
+      alert('Please enter a search query.');
+    }
+  });
+
+  // Search on pressing Enter
+  codeSearchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      codeSearchButton.click();
+    }
+  });
+
+  // Toggle search panel visibility
+  document.getElementById('search-icon-button').addEventListener('click', () => {
+    searchPanel.style.display = searchPanel.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // Close search panel
+  document.getElementById('code-close-button').addEventListener('click', () => {
+    searchPanel.style.display = 'none';
+  });
+
+  // Modify the callGeminiAPI function
+  async function callGeminiAPI(prompt) {
+    const apiKey = 'AIzaSyDoJxXE4EjKBYGj6q9JbwnTMBDR8WClFUc'; // Replace with your Gemini API key
+    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+
+    try {
+      const response = await fetch(`${apiUrl}?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      });
+      const data = await response.json();
+      return data.candidates[0].content.parts[0].text.trim();
+    } catch (error) {
+      return `Failed to fetch suggestions: ${error.message}`;
+    }
+  }
+
+  // Connect to the WebSocket server
+const ws = new WebSocket('ws://localhost:8080');
+
+// Handle WebSocket connection
+ws.onopen = () => {
+  console.log('Connected to WebSocket server');
+};
+
+// Handle incoming messages from the WebSocket server
+ws.onmessage = (event) => {
+  const message = JSON.parse(event.data);
+  console.log(message);
+
+  if (message.type === 'codeUpdate') {
+    // Update the editor with the new code
+    document.getElementById('language-select').value = message.language;
+    languageSelect.dispatchEvent(new Event('change'));
+    editor.setValue(message.code); // Now update the code
+    console.log("CHANGED");
+  } else if (message.type === 'sessionCreated') {
+    // Notify the user that the session was created
+    appendToTerminal(`✅ Session created with ID: ${message.sessionId}`);
+    document.getElementById('session-id').value = message.sessionId; // Auto-fill the session ID
+  } else if (message.type === 'sessionJoined') {
+    // Notify the user that they joined a session
+    appendToTerminal(`✅ Joined session: ${message.sessionId}`);
+    document.getElementById('language-select').value = message.language;
+  } else if (message.type === 'sessionLeft') {
+    // Notify the user that they left a session
+    appendToTerminal(`✅ Left session: ${message.sessionId}`);
+    document.getElementById('language-select').value = ''; // Reset the language select
+  }
+};
+
+// Send code updates to the WebSocket server
+// Debounce function
+function debounce(func, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(this, args), delay);
+  };
 }
 
 let lastSentCode = '';
 
 // Debounced function to send code updates
-const sendCodeUpdate = throttle(() => {
+const sendCodeUpdate = debounce(() => {
   const code = editor.getValue();
   const language = languageSelect.value;
   const sessionId = document.getElementById('session-id').value;
 
   if (code !== lastSentCode) { // Only send if the code has changed
-      lastSentCode = code; // Update the last sent code
-      const message = JSON.stringify({ type: 'codeUpdate', code, language, sessionId, source: 'self' });
-      ws.send(message);
-      console.log('Code update sent:', code); // Debugging
+    lastSentCode = code; // Update the last sent code
+    const message = JSON.stringify({ type: 'codeUpdate', code, language, sessionId });
+    ws.send(message);
+    console.log('Code update sent:', code); // Debugging
   }
 }, 500); // 500ms delay
 
 // Attach the debounced function to the editor's change event
-let isRemoteUpdate = false;
 editor.onDidChangeModelContent(() => {
-    if (!isRemoteUpdate) {
-        sendCodeUpdate();
-    }
+  sendCodeUpdate();
 });
 
-  // editor.onDidChangeModelContent(() => {
-  //   const code = editor.getValue();
-  //   const language = languageSelect.value;
-  //   const sessionId = document.getElementById('session-id').value; // Get the current session ID
-  //   const message = JSON.stringify({ type: 'codeUpdate', code, language, sessionId });
-  //   ws.send(message);
-  // });
-
-  // Create a new session
-  document.getElementById('create-session').addEventListener('click', () => {
-    const sessionId = Math.random().toString(36).substring(7); // Generate a random session ID
-    const code = editor.getValue();
-    const language = languageSelect.value;
-    const message = JSON.stringify({ type: 'createSession', sessionId, code, language });
-    ws.send(message);
-  });
-
-  // Join an existing session
-  document.getElementById('join-session').addEventListener('click', () => {
-    const sessionId = document.getElementById('session-id').value;
-    if (sessionId) {
-      const message = JSON.stringify({ type: 'joinSession', sessionId });
-      ws.send(message);
-    } else {
-      alert('Please enter a session ID.');
-    }
-  });
-
-  document.getElementById('leave-session').addEventListener('click', () => {
-    const message = JSON.stringify({ type: 'leaveSession' });
-    ws.send(message);
-  });
+// Create a new session
+document.getElementById('create-session').addEventListener('click', () => {
+  const sessionId = Math.random().toString(36).substring(7); // Generate a random session ID
+  const code = editor.getValue();
+  const language = languageSelect.value;
+  const message = JSON.stringify({ type: 'createSession', sessionId, code, language });
+  ws.send(message);
 });
 
-
-// Search Panel Elements
-const codeSearchInput = document.getElementById('code-search-input');
-const codeSearchButton = document.getElementById('code-search-button');
-const searchResults = document.getElementById('search-results');
-const searchPanel = document.getElementById('search-panel');
-
-// Function to handle code search
-async function searchCode(query) {
-  try {
-    // Call the AI API to process the query
-    const response = await callGeminiAPI(`Find code helpers for: ${query}`);
-    const snippets = response.split('\n').filter(line => line.trim() !== '');
-
-    // Display results
-    searchResults.innerHTML = '';
-    snippets.forEach(snippet => {
-      const resultDiv = document.createElement('div');
-      resultDiv.className = 'search-result';
-      resultDiv.textContent = snippet;
-      resultDiv.addEventListener('click', () => {
-        editor.setValue(snippet); /
-      });
-      searchResults.appendChild(resultDiv);
-    });
-  } catch (error) {
-    appendToTerminal(`⚠️ Failed to search code: ${error.message}`);
-  }
-}
-
-// Event listener for search button
-codeSearchButton.addEventListener('click', () => {
-  const query = codeSearchInput.value.trim();
-  if (query) {
-    searchCode(query);
+// Join an existing session
+document.getElementById('join-session').addEventListener('click', () => {
+  const sessionId = document.getElementById('session-id').value;
+  if (sessionId) {
+    const message = JSON.stringify({ type: 'joinSession', sessionId });
+    ws.send(message);
   } else {
-    alert('Please enter a search query.');
+    alert('Please enter a session ID.');
   }
 });
 
-// Search on pressing Enter
-codeSearchInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    codeSearchButton.click();
+// Leave the current session
+document.getElementById('leave-session').addEventListener('click', () => {
+  const sessionId = document.getElementById('session-id').value;
+  if (sessionId) {
+    const message = JSON.stringify({ type: 'leaveSession', sessionId });
+    ws.send(message);
+    console.log('✅ Left session:', sessionId);
+  } else {
+    alert('No session to leave.');
   }
 });
 
-// Toggle search panel visibility
-document.getElementById('search-icon-button').addEventListener('click', () => {
-  searchPanel.style.display = searchPanel.style.display === 'none' ? 'block' : 'none';
 });
 
-// Close search panel
-document.getElementById('code-close-button').addEventListener('click', () => {
-  searchPanel.style.display = 'none';
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('collab-icon').addEventListener('click', function() {
+    const dropdown = document.getElementById('collab-dropdown');
+    dropdown.classList.toggle('show');
+  });
+
+  // Close the dropdown if clicked outside
+  window.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('collab-dropdown');
+    if (!event.target.matches('#collab-icon') && !dropdown.contains(event.target)) {
+      dropdown.classList.remove('show');
+    }
+  });
 });
 
-// Modify the callGeminiAPI function
-async function callGeminiAPI(prompt) {
-  const apiKey = 'AIzaSyDoJxXE4EjKBYGj6q9JbwnTMBDR8WClFUc'; // Replace with your Gemini API key
-  const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-
-  try {
-    const response = await fetch(`${apiUrl}?key=${apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
-    });
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text.trim();
-  } catch (error) {
-    return `Failed to fetch suggestions: ${error.message}`;
-  }
-}

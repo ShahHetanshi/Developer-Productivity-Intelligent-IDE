@@ -66,14 +66,15 @@
         </svg>
       </button>
 
-<!-- Add this search panel somewhere in the body -->
-<div id="search-panel" style="display: none;">
-  <button id="code-close-button" aria-label="Close search panel">×</button>
-  <input type="text" id="code-search-input" placeholder="Search for code helpers...">
-  <button id="code-search-button">Search</button>
-  <div id="search-results"></div>
-</div>
+    <!-- Add this search panel somewhere in the body -->
+    <div id="search-panel" style="display: none;">
+      <button id="code-close-button" aria-label="Close search panel">×</button>
+      <input type="text" id="code-search-input" placeholder="Search for code helpers...">
+      <button id="code-search-button">Search</button>
+      <div id="search-results"></div>
     </div>
+        </div>
+        
 
     <!-- Right-aligned buttons -->
     <div id="right-buttons">
@@ -83,6 +84,18 @@
       <button id="deploy-button">Live Server (HTML)</button>
       <button id="ai-code-button">AI Generate Code</button>
       <button id="restart-suggestions-button" style="display: none;">Restart Suggestions</button>
+    </div>
+
+
+     <!-- Collaboration Session Dropdown -->
+     <div id="collab-session">
+      <button id="collab-icon" aria-label="Collaboration">👥</button>
+      <div id="collab-dropdown">
+        <input type="text" id="session-id" placeholder="Enter session ID">
+        <button id="create-session">Create Session</button>
+        <button id="join-session">Join Session</button>
+        <button id="leave-session">Leave Session</button>
+      </div>
     </div>
 
     <!-- Graph Mode and Drawing Buttons -->
@@ -142,6 +155,7 @@
       </div>
     </div>
   </div>
+
   <!-- Graph  -->
   <div id="graph-visualization-container" class="visualization-container">
     <div class="visualization-header">
