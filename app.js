@@ -7,8 +7,8 @@ require.config({
 require(['vs/editor/editor.main'], function () {
   // Initialize Monaco Editor
   const editor = monaco.editor.create(document.getElementById('editor'), {
-    value: `// Welcome to Simple Intelligent IDE!\nconsole.log("Hello, World!");`,
-    language: 'javascript',
+    value: `# Welcome to Python!\nname = input("Enter your name: ")\nprint("Hello, " + name)`,
+    language: 'python',
     theme: 'vs-dark',
     automaticLayout: true,
   });
@@ -736,7 +736,7 @@ require(['vs/editor/editor.main'], function () {
         resultDiv.className = 'search-result';
         resultDiv.textContent = snippet;
         resultDiv.addEventListener('click', () => {
-          editor.setValue(snippet); 
+          editor.setValue(snippet);
         });
         searchResults.appendChild(resultDiv);
       });
@@ -795,116 +795,119 @@ require(['vs/editor/editor.main'], function () {
   }
 
   // Connect to the WebSocket server
-const ws = new WebSocket('ws://localhost:8080');
+  const ws = new WebSocket('ws://localhost:8080');
 
-// Handle WebSocket connection
-ws.onopen = () => {
-  console.log('Connected to WebSocket server');
-};
-
-// Handle incoming messages from the WebSocket server
-ws.onmessage = (event) => {
-  const message = JSON.parse(event.data);
-  console.log(message);
-
-  if (message.type === 'codeUpdate') {
-    // Update the editor with the new code
-    document.getElementById('language-select').value = message.language;
-    languageSelect.dispatchEvent(new Event('change'));
-    editor.setValue(message.code); // Now update the code
-    console.log("CHANGED");
-  } else if (message.type === 'sessionCreated') {
-    // Notify the user that the session was created
-    appendToTerminal(`✅ Session created with ID: ${message.sessionId}`);
-    document.getElementById('session-id').value = message.sessionId; // Auto-fill the session ID
-  } else if (message.type === 'sessionJoined') {
-    // Notify the user that they joined a session
-    appendToTerminal(`✅ Joined session: ${message.sessionId}`);
-    document.getElementById('language-select').value = message.language;
-  } else if (message.type === 'sessionLeft') {
-    // Notify the user that they left a session
-    appendToTerminal(`✅ Left session: ${message.sessionId}`);
-    document.getElementById('language-select').value = ''; // Reset the language select
-  }
-};
-
-// Send code updates to the WebSocket server
-// Debounce function
-function debounce(func, delay) {
-  let timeoutId;
-  return function (...args) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(this, args), delay);
+  // Handle WebSocket connection
+  ws.onopen = () => {
+    console.log('Connected to WebSocket server');
   };
-}
 
-let lastSentCode = '';
+  // Handle incoming messages from the WebSocket server
+  ws.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    console.log(message);
 
-// Debounced function to send code updates
-const sendCodeUpdate = debounce(() => {
-  const code = editor.getValue();
-  const language = languageSelect.value;
-  const sessionId = document.getElementById('session-id').value;
+    if (message.type === 'codeUpdate') {
+      // Update the editor with the new code
+      document.getElementById('language-select').value = message.language;
+      languageSelect.dispatchEvent(new Event('change'));
+      editor.setValue(message.code); // Now update the code
+      // console.log("CHANGED");
+    } else if (message.type === 'sessionCreated') {
+      // Notify the user that the session was created
+      appendToTerminal(`🎉 Session successfully created! 🚀\n📌 Session ID: ${message.sessionId}\n👤 Host: ${message.name}`);
+      document.getElementById('session-id').value = message.sessionId; // Auto-fill the session ID
+    } else if (message.type === 'sessionJoined') {
+      // Notify the user that they joined a session
+      appendToTerminal(`✅ You joined session: ${message.sessionId} as ${message.name}.`);
+      document.getElementById('language-select').value = message.language;
+    } else if (message.type === 'sessionLeft') {
+      // Notify the user that they left a session
+      appendToTerminal(`✅ You left session: ${message.sessionId}.`);
+      document.getElementById('language-select').value = ''; // Reset the language select
+      document.getElementById('session-id').value = '';
+    } else if (message.type === 'userJoined') {
+      appendToTerminal(`👋 ${message.name} joined the session.`);
+    } else if (message.type === 'userLeft') {
+      appendToTerminal(`🚪 ${message.name} left the session.`);
+    }
+  };
 
-  if (code !== lastSentCode) { // Only send if the code has changed
-    lastSentCode = code; // Update the last sent code
-    const message = JSON.stringify({ type: 'codeUpdate', code, language, sessionId });
-    ws.send(message);
-    console.log('Code update sent:', code); // Debugging
+  // Send code updates to the WebSocket server
+  // Debounce function
+  function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
   }
-}, 500); // 500ms delay
 
-// Attach the debounced function to the editor's change event
-editor.onDidChangeModelContent(() => {
-  sendCodeUpdate();
-});
+  let lastSentCode = '';
 
-// Create a new session
-document.getElementById('create-session').addEventListener('click', () => {
-  const sessionId = Math.random().toString(36).substring(7); // Generate a random session ID
-  const code = editor.getValue();
-  const language = languageSelect.value;
-  const message = JSON.stringify({ type: 'createSession', sessionId, code, language });
-  ws.send(message);
-});
+  // Debounced function to send code updates
+  const sendCodeUpdate = debounce(() => {
+    const code = editor.getValue();
+    const language = languageSelect.value;
+    const sessionId = document.getElementById('session-id').value;
 
-// Join an existing session
-document.getElementById('join-session').addEventListener('click', () => {
-  const sessionId = document.getElementById('session-id').value;
-  if (sessionId) {
-    const message = JSON.stringify({ type: 'joinSession', sessionId });
+    if (code !== lastSentCode) { // Only send if the code has changed
+      lastSentCode = code; // Update the last sent code
+      const message = JSON.stringify({ type: 'codeUpdate', code, language, sessionId });
+      ws.send(message);
+      console.log('Code update sent:', code); // Debugging
+    }
+  }, 500); // 500ms delay
+
+  // Attach the debounced function to the editor's change event
+  editor.onDidChangeModelContent(() => {
+    sendCodeUpdate();
+  });
+
+  // Create a new session
+  document.getElementById('create-session').addEventListener('click', () => {
+    const sessionId = Math.random().toString(36).substring(7); // Generate a random session ID
+    const code = editor.getValue();
+    const language = languageSelect.value;
+    const name = document.getElementById('name').value || "Anonymous";
+    const message = JSON.stringify({ type: 'createSession', sessionId, code, language, name });
     ws.send(message);
-  } else {
-    alert('Please enter a session ID.');
-  }
+  });
+
+  // Join and leave an existing session
+  document.getElementById('join-session').addEventListener('click', () => {
+    const sessionId = document.getElementById('session-id').value;
+    const joinButton = document.getElementById('join-session');
+    const name = document.getElementById('name').value || "Anonymous";
+    if (sessionId) {
+      if (joinButton.textContent === 'Join Session') {
+        const message = JSON.stringify({ type: 'joinSession', sessionId, name });
+        ws.send(message);
+        joinButton.textContent = 'Leave Session';
+      }
+      else {
+        const message = JSON.stringify({ type: 'leaveSession', sessionId, name });
+        ws.send(message);
+        console.log('✅ Left session:', sessionId);
+        joinButton.textContent = 'Join Session';
+      }
+    } else {
+      alert('Please enter a session ID.');
+    }
+  });
 });
 
-// Leave the current session
-document.getElementById('leave-session').addEventListener('click', () => {
-  const sessionId = document.getElementById('session-id').value;
-  if (sessionId) {
-    const message = JSON.stringify({ type: 'leaveSession', sessionId });
-    ws.send(message);
-    console.log('✅ Left session:', sessionId);
-  } else {
-    alert('No session to leave.');
-  }
-});
-
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('collab-icon').addEventListener('click', function() {
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('collab-icon').addEventListener('click', function () {
     const dropdown = document.getElementById('collab-dropdown');
     dropdown.classList.toggle('show');
   });
 
   // Close the dropdown if clicked outside
-  window.addEventListener('click', function(event) {
+  window.addEventListener('click', function (event) {
     const dropdown = document.getElementById('collab-dropdown');
     if (!event.target.matches('#collab-icon') && !dropdown.contains(event.target)) {
       dropdown.classList.remove('show');
     }
   });
 });
-
