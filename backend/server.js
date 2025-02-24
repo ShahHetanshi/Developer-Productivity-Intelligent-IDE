@@ -6,6 +6,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const tmp = require('tmp');
+const WebSocket = require('ws'); // Import WebSocket only once
 
 const app = express();
 app.use(cors());
@@ -17,11 +18,112 @@ const htmlFilePath = path.join(htmlPreviewDir, 'temp.html'); // Static file path
 // Serve the static HTML preview
 app.use('/preview', express.static(htmlPreviewDir, { cacheControl: false }));
 
-app.post('/deploy',async (req,res)=>{
+// Create a WebSocket server
+const wss = new WebSocket.Server({ port: 8080 });
+
+const sessions = new Map(); // Store session data
+
+wss.on('connection', (ws) => {
+    console.log('New client connected');
+
+    // Handle incoming messages from the client
+    ws.on('message', (message) => {
+        const data = JSON.parse(message.toString());
+        console.log('Received:', data);
+
+        if (data.type === 'createSession') {
+            const sessionId = data.sessionId;
+
+            if (!sessions.has(sessionId)) {
+                sessions.set(sessionId, {
+                    clients: new Set(),
+                    code: data.code || '', // Store initial code
+                    language: data.language || 'javascript', // Store initial language
+                });
+
+                sessions.get(sessionId).clients.add(ws);
+                ws.sessionId = sessionId;
+                console.log(`✅ Session created: ${sessionId}`);
+
+                // Send confirmation and initial code to the creator
+                ws.send(JSON.stringify({ type: 'sessionCreated', sessionId }));
+                // ws.send(JSON.stringify({ type: 'codeUpdate', code: data.code, language: data.language }));
+            } else {
+                ws.send(JSON.stringify({ type: 'error', message: '⚠️ Session already exists' }));
+            }
+        }
+
+        // In server.js, modify the joinSession handler
+        else if (data.type === 'joinSession') {
+            const sessionId = data.sessionId;
+
+            if (sessions.has(sessionId)) {
+                const session = sessions.get(sessionId);
+                session.clients.add(ws);
+
+                ws.sessionId = sessionId; // Set the sessionId for the WebSocket object
+                console.log(`✅ Client joined session: ${sessionId}`);
+                ws.send(JSON.stringify({ type: 'sessionJoined', sessionId }));
+
+                // Send latest stored code and language to the newly joined client
+                ws.send(JSON.stringify({
+                    type: 'codeUpdate',
+                    code: session.code,
+                    language: session.language
+                }));
+            } else {
+                ws.send(JSON.stringify({ type: 'error', message: '❌ Session does not exist' }));
+            }
+        }
+
+        else if (data.type === 'codeUpdate') {
+            const sessionId = data.sessionId;
+            if (sessions.has(sessionId)) {
+                const session = sessions.get(sessionId);
+                session.code = data.code;
+                session.language = data.language;
+
+                // Broadcast to all clients in the session (except sender)
+                session.clients.forEach(client => {
+                    if (client !== ws && client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify({
+                            type: 'codeUpdate',
+                            code: data.code,
+                            language: data.language
+                        }));
+                    }
+                });
+            } else {
+                ws.send(JSON.stringify({ type: 'error', message: '❌ Session does not exist' }));
+            }
+        }
+    });
+
+    // Handle client disconnection
+    ws.on('close', () => {
+        console.log("⚠️ Client disconnected");
+
+        if (ws.sessionId && sessions.has(ws.sessionId)) {
+            const session = sessions.get(ws.sessionId);
+            session.clients.delete(ws);
+
+            // If no more clients, delete the session
+            if (session.clients.size === 0) {
+                sessions.delete(ws.sessionId);
+                console.log(`🗑️ Session ${ws.sessionId} deleted (no clients left)`);
+            }
+        }
+    });
+});
+
+console.log('WebSocket server is running on ws://localhost:8080');
+
+// Existing routes for HTML preview and code execution
+app.post('/deploy', async (req, res) => {
     const { code, language } = req.body;
 
-    if(language!=="html"){
-        return res.json({ error: "Live Server Not Supported For this language"});
+    if (language !== "html") {
+        return res.json({ error: "Live Server Not Supported For this language" });
     }
 
     fs.writeFileSync(htmlFilePath, code);
@@ -29,12 +131,12 @@ app.post('/deploy',async (req,res)=>{
     return res.json({ url: `http://localhost:3000/preview/temp.html` });
 });
 
-app.post('/live-server',async (req,res)=>{
+app.post('/live-server', async (req, res) => {
     const { code, language } = req.body;
-    if(language!=="html"){
-        return res.json({ error: "Live Server Not Supported For this language"});
+    if (language !== "html") {
+        return res.json({ error: "Live Server Not Supported For this language" });
     }
-    
+
     fs.writeFileSync(htmlFilePath, code);
 
     res.json({ success: true, message: "Live server updated!" });
@@ -66,40 +168,40 @@ app.post('/execute-code', (req, res) => {
                     // Create a temporary directory
                     const tempDirObj = tmp.dirSync({ unsafeCleanup: true });
                     const tempDir = tempDirObj.name;
-            
+
                     // Define the path for the temporary TypeScript file
                     const tempFile = path.join(tempDir, 'temp.ts');
-            
+
                     // Remove "export {}" if present in user code
                     const fixedCode = code.replace(/\bexport\s*{};/g, '');
-                    
+
                     // Write the corrected TypeScript code to the temporary file
                     fs.writeFileSync(tempFile, fixedCode);
-            
+
                     // Spawn a child process to run the TypeScript code using ts-node
                     const childProcess = spawn('npx', ['ts-node', tempFile], {
                         shell: true,
                         env: { ...process.env, NODE_OPTIONS: '--loader ts-node/esm' }
                     });
-            
+
                     // Handle input if provided
                     if (input) {
                         childProcess.stdin.write(input + '\n'); // Ensure newline for input
                         childProcess.stdin.end();
                     }
-            
+
                     let output = '';
                     let errorOutput = '';
-            
+
                     // Capture stdout and stderr
                     childProcess.stdout.on('data', (data) => output += data.toString());
                     childProcess.stderr.on('data', (data) => errorOutput += data.toString());
-            
+
                     // Handle process close event
                     childProcess.on('close', (exitCode) => {
                         // Clean up the temporary directory
                         tempDirObj.removeCallback();
-            
+
                         // Send the response based on the exit code
                         if (exitCode === 0) {
                             res.json({ output: output.trim() });
@@ -107,13 +209,13 @@ app.post('/execute-code', (req, res) => {
                             res.json({ error: errorOutput.trim() || "Runtime error" });
                         }
                     });
-            
+
                     // Handle process error event
                     childProcess.on('error', (err) => {
                         tempDirObj.removeCallback();
                         res.status(500).json({ error: `Failed to start subprocess: ${err.message}` });
                     });
-            
+
                 } catch (err) {
                     // Handle any synchronous errors
                     res.status(500).json({ error: `An error occurred: ${err.message}` });
@@ -219,6 +321,7 @@ app.post('/execute-code', (req, res) => {
     });
 });
 
+// Start the Express server
 app.listen(3000, () => {
     console.log("Server running at http://localhost:3000");
 });

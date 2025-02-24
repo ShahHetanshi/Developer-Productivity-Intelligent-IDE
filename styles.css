@@ -522,8 +522,196 @@ textarea {
   border-color: #333;
 }
 
-#canvas {
-  border: 1px solid #ccc;
+#drawing-canvas {
+  border: 2px solid #000; /* Add a 2px solid black border */
   border-radius: 4px;
   background: #f9f9f9;
+  align-content: center;
 }
+
+#clear-canvas {
+  margin-left: auto; /*  the button to the right */
+  display: block; /* Ensures the button behaves as a block element */
+}
+
+/* Add these styles at the end of the file */
+
+/* Algorithm Visualization Panel */
+#algorithm-visualization-container {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Hidden by default */
+}
+
+#algorithm-visualization {
+  margin-top: 10px;
+  height: 300px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+}
+
+/* Data Structure Visualization Panel */
+#data-structure-visualization-container {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Hidden by default */
+}
+
+#data-structure-visualization {
+  margin-top: 10px;
+  height: 300px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+}
+
+/* Common Styles for Visualization Panels */
+.visualization-container {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Hidden by default */
+}
+
+.visualization-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.visualization-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+.action-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.action-button:hover {
+  background: #0056b3;
+}
+
+/* Add this to styles.css */
+#search-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#search-icon-button svg {
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+}
+
+#search-icon-button:hover svg {
+  fill: #007acc;
+}
+
+#search-panel {
+  position: fixed;
+  top: 60px; /* Adjust based on your toolbar height */
+  left: 20px;
+  background-color: #252526;
+  padding: 10px;
+  border: 1px solid #444;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  width: 300px;
+  display: none; /* Hidden by default */
+}
+
+#code-close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#code-close-button:hover {
+  color: #e74c3c; /* Red color on hover */
+}
+
+#code-search-input {
+  width: calc(100% - 90px);
+  padding: 8px;
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+#code-search-button {
+  width: 80px;
+  padding: 8px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#search-results {
+  margin-top: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.search-result {
+  background-color: #1e1e1e;
+  padding: 10px;
+  margin-bottom: 5px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-result:hover {
+  background-color: #333;
+}
+

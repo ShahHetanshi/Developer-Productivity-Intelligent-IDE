@@ -55,14 +55,24 @@
         <option value="javascript">JavaScript</option>
         <option value="typescript">TypeScript</option>
         <option value="html">HTML</option>
-        <option value="nodejs">Node.js</option>
-        <option value="react">React</option>
-        <option value="angular">Angular</option>
-        <option value="vue">Vue</option>
       </select>
       <button id="new-file-button">New File</button>
       <button id="open-file-button">Open File</button>
       <button id="save-file-button">Save File</button>
+      <!-- Add this inside the #toolbar div -->
+      <button id="search-icon-button" aria-label="Search">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.7422 10.3439C12.5329 9.2673 13 7.9382 13 6.5C13 2.91015 10.0899 0 6.5 0C2.91015 0 0 2.91015 0 6.5C0 10.0899 2.91015 13 6.5 13C7.93858 13 9.26802 12.5327 10.3448 11.7415L10.3439 11.7422C10.3734 11.7822 10.4062 11.8204 10.4424 11.8566L14.2929 15.7071C14.6834 16.0976 15.3166 16.0976 15.7071 15.7071C16.0976 15.3166 16.0976 14.6834 15.7071 14.2929L11.8566 10.4424C11.8204 10.4062 11.7822 10.3734 11.7422 10.3439ZM6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 8.98528 8.98528 11 6.5 11Z" fill="white"/>
+        </svg>
+      </button>
+
+<!-- Add this search panel somewhere in the body -->
+<div id="search-panel" style="display: none;">
+  <button id="code-close-button" aria-label="Close search panel">×</button>
+  <input type="text" id="code-search-input" placeholder="Search for code helpers...">
+  <button id="code-search-button">Search</button>
+  <div id="search-results"></div>
+</div>
     </div>
 
     <!-- Right-aligned buttons -->
