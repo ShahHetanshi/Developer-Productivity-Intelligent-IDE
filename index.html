@@ -83,11 +83,12 @@
       <button id="run-test-button">Run Test</button>
       <button id="deploy-button">Live Server (HTML)</button>
       <button id="ai-code-button">AI Generate Code</button>
+      <button id="collab-button" aria-label="Collaboration">🤝</button>
       <button id="restart-suggestions-button" style="display: none;">Restart Suggestions</button>
     </div>
 
-
-     <!-- Collaboration Session Dropdown -->
+    
+     <!-- Collaboration Session Dropdown
      <div id="collab-session">
       <div id="collab-dropdown">
         <input type="text" id="name" placeholder="Enter Your Name">
@@ -95,7 +96,7 @@
         <button id="create-session" aria-label="Collaboration">👥</button>
         <button id="join-session">Join Session</button>
       </div>
-    </div>
+    </div> -->
 
     <!-- Graph Mode and Drawing Buttons -->
     <div id="graph-mode-buttons">
@@ -122,13 +123,13 @@
   </div>
 
   <!-- Terminal -->
-  <div id="terminal">
-    <pre id="output"></pre>
-    <div id="terminal-scroll-buttons">
-      <button id="scroll-up">↑</button>
-      <button id="scroll-down">↓</button>
-    </div>
+<div id="terminal">
+  <pre id="output"></pre>
+  <div id="terminal-scroll-buttons">
+    <button id="scroll-up">↑</button>
+    <button id="scroll-down">↓</button>
   </div>
+</div>
 
   <!-- Test Panel -->
   <div id="test-panel">
@@ -186,6 +187,18 @@
     </div>
   </div>
 
+
+  <!-- Collaboration Session Dropdown -->
+  <div id="collab-session">
+    <div id="collab-dropdown">
+      <input type="text" id="name" placeholder="Enter Your Name">
+      <input type="text" id="session-id" placeholder="Enter session ID">
+      <button id="create-session" aria-label="Collaboration">➕ Add/create</button>
+      <button id="join-session">👥 Join group</button>
+    </div>
+  </div>
+
+  
   <script src="https://unpkg.com/monaco-editor@0.33.0/min/vs/loader.js"></script>
   <script src="app.js"></script>
 </body>

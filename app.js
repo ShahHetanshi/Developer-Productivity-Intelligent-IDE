@@ -872,6 +872,8 @@ require(['vs/editor/editor.main'], function () {
     const name = document.getElementById('name').value || "Anonymous";
     const message = JSON.stringify({ type: 'createSession', sessionId, code, language, name });
     ws.send(message);
+    const joinButton = document.getElementById('join-session');
+    joinButton.textContent = 'Leave Session';
   });
 
   // Join and leave an existing session
@@ -911,3 +913,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+// Get references to the collab button and dropdown
+const collabButton = document.getElementById('collab-button');
+const collabSession = document.getElementById('collab-session');
+
+// Toggle collab dropdown visibility
+collabButton.addEventListener('click', () => {
+  if (collabSession.style.display === 'none' || !collabSession.style.display) {
+    collabSession.style.display = 'block'; // Show the dropdown
+  } else {
+    collabSession.style.display = 'none'; // Hide the dropdown
+  }
+});
+
+// Hide dropdown when clicking outside
+document.addEventListener('click', (event) => {
+  if (!collabButton.contains(event.target) && !collabSession.contains(event.target)) {
+    collabSession.style.display = 'none'; // Hide the dropdown
+  }
+}); 
+

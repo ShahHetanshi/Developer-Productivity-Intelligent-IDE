@@ -33,21 +33,22 @@ wss.on('connection', (ws) => {
 
         if (data.type === 'createSession') {
             const sessionId = data.sessionId;
+            const name = data.name || "Anonymous"; // Default to "Anonymous" if no name is provided
 
             if (!sessions.has(sessionId)) {
                 sessions.set(sessionId, {
-                    clients: new Set(),
-                    code: data.code || '', // Store initial code
-                    language: data.language || 'javascript', // Store initial language
+                    clients: new Map(), // Use a Map to store clients and names
+                    code: data.code || '',
+                    language: data.language || 'javascript',
                 });
 
-                sessions.get(sessionId).clients.add(ws);
+                sessions.get(sessionId).clients.set(ws, name);
                 ws.sessionId = sessionId;
-                console.log(`✅ Session created: ${sessionId}`);
+                ws.userName = name; // Store name in WebSocket
 
-                // Send confirmation and initial code to the creator
-                ws.send(JSON.stringify({ type: 'sessionCreated', sessionId }));
-                // ws.send(JSON.stringify({ type: 'codeUpdate', code: data.code, language: data.language }));
+                console.log(`✅ Session created: ${sessionId} by ${name}`);
+
+                ws.send(JSON.stringify({ type: 'sessionCreated', sessionId, name }));
             } else {
                 ws.send(JSON.stringify({ type: 'error', message: '⚠️ Session already exists' }));
             }
@@ -56,16 +57,32 @@ wss.on('connection', (ws) => {
         // In server.js, modify the joinSession handler
         else if (data.type === 'joinSession') {
             const sessionId = data.sessionId;
+            const name = data.name || "Anonymous"; // Default if no name is given
 
             if (sessions.has(sessionId)) {
                 const session = sessions.get(sessionId);
-                session.clients.add(ws);
+                session.clients.set(ws, name); // Store client with name
+                ws.sessionId = sessionId;
+                ws.userName = name;
 
-                ws.sessionId = sessionId; // Set the sessionId for the WebSocket object
-                console.log(`✅ Client joined session: ${sessionId}`);
-                ws.send(JSON.stringify({ type: 'sessionJoined', sessionId }));
+                console.log(`✅ ${name} joined session: ${sessionId}`);
 
-                // Send latest stored code and language to the newly joined client
+                // Notify the joining user
+                ws.send(JSON.stringify({ type: 'sessionJoined', sessionId, name }));
+
+                // Notify other users in session
+                session.clients.forEach((client, clientWs) => {
+                    if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
+                        clientWs.send(JSON.stringify({
+                            type: 'userJoined',
+                            sessionId,
+                            name,
+                            message: `${name} has joined the session.`
+                        }));
+                    }
+                });
+
+                // Send latest stored code and language
                 ws.send(JSON.stringify({
                     type: 'codeUpdate',
                     code: session.code,
@@ -78,15 +95,18 @@ wss.on('connection', (ws) => {
 
         else if (data.type === 'codeUpdate') {
             const sessionId = data.sessionId;
+        
             if (sessions.has(sessionId)) {
                 const session = sessions.get(sessionId);
-                session.code = data.code;
-                session.language = data.language;
-
+                session.code = data.code;  // Store latest code
+                session.language = data.language;  // Store latest language
+        
+                console.log(`📡 Broadcasting updated code in session: ${sessionId}`);
+        
                 // Broadcast to all clients in the session (except sender)
-                session.clients.forEach(client => {
-                    if (client !== ws && client.readyState === WebSocket.OPEN) {
-                        client.send(JSON.stringify({
+                session.clients.forEach((name, clientWs) => {
+                    if (clientWs !== ws && clientWs.readyState === WebSocket.OPEN) {
+                        clientWs.send(JSON.stringify({
                             type: 'codeUpdate',
                             code: data.code,
                             language: data.language
@@ -96,21 +116,74 @@ wss.on('connection', (ws) => {
             } else {
                 ws.send(JSON.stringify({ type: 'error', message: '❌ Session does not exist' }));
             }
+        }        
+
+        else if (data.type === 'leaveSession') {
+            const sessionId = data.sessionId;
+
+            if (sessions.has(sessionId)) {
+                const session = sessions.get(sessionId);
+                const name = session.clients.get(ws) || "A user";
+
+                // Remove client from the session
+                session.clients.delete(ws);
+                console.log(`✅ ${name} left session: ${sessionId}`);
+
+                // Notify the client that they left
+                ws.send(JSON.stringify({ type: 'sessionLeft', sessionId, name }));
+
+                // Notify remaining users
+                session.clients.forEach((client, clientWs) => {
+                    if (clientWs.readyState === WebSocket.OPEN) {
+                        clientWs.send(JSON.stringify({
+                            type: 'userLeft',
+                            sessionId,
+                            name,
+                            message: `${name} has left the session.`
+                        }));
+                    }
+                });
+
+                // If no clients are left, delete the session
+                if (session.clients.size === 0) {
+                    sessions.delete(sessionId);
+                    console.log(`🗑️ Session ${sessionId} deleted (no active clients).`);
+                }
+
+                delete ws.sessionId;
+                delete ws.userName;
+            } else {
+                ws.send(JSON.stringify({ type: 'error', message: '❌ Session does not exist' }));
+            }
         }
+
     });
 
     // Handle client disconnection
     ws.on('close', () => {
-        console.log("⚠️ Client disconnected");
-
         if (ws.sessionId && sessions.has(ws.sessionId)) {
             const session = sessions.get(ws.sessionId);
-            session.clients.delete(ws);
+            const name = session.clients.get(ws) || "A user";
 
-            // If no more clients, delete the session
+            session.clients.delete(ws);
+            console.log(`⚠️ ${name} disconnected from session: ${ws.sessionId}`);
+
+            // Notify remaining clients
+            session.clients.forEach((client, clientWs) => {
+                if (clientWs.readyState === WebSocket.OPEN) {
+                    clientWs.send(JSON.stringify({
+                        type: 'userLeft',
+                        sessionId: ws.sessionId,
+                        name,
+                        message: `${name} has disconnected.`
+                    }));
+                }
+            });
+
+            // Delete session if empty
             if (session.clients.size === 0) {
                 sessions.delete(ws.sessionId);
-                console.log(`🗑️ Session ${ws.sessionId} deleted (no clients left)`);
+                console.log(`🗑️ Session ${ws.sessionId} deleted (no active clients).`);
             }
         }
     });
