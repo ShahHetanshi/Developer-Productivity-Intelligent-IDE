@@ -40,35 +40,6 @@ app.post('/live-server',async (req,res)=>{
     res.json({ success: true, message: "Live server updated!" });
 });
 
-app.post('/proxy/ollama', async (req, res) => {
-    try {
-        const { model, prompt, stream } = req.body;
-
-        // Forward the request to Ollama API
-        const ollamaResponse = await fetch('http://localhost:11434/api/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ model, prompt, stream })
-        });
-
-        // Check if the Ollama API request was successful
-        if (!ollamaResponse.ok) {
-            throw new Error(`Ollama API request failed with status ${ollamaResponse.status}`);
-        }
-
-        // Parse the Ollama API response
-        const data = await ollamaResponse.json();
-
-        // Send the response back to the frontend
-        res.json(data);
-    } catch (error) {
-        console.error('Proxy error:', error);
-        res.status(500).json({ error: `Proxy error: ${error.message}` });
-    }
-});
-
 app.post('/execute-code', (req, res) => {
     const { code, language, input } = req.body;
     let runCmd, args = [], tempFile, tempDir, compileCmd = null, executable = null;

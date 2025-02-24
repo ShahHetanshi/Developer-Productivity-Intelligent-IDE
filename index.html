@@ -5,6 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simple Intelligent IDE</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Additional styles for the new features */
+    #graph-mode-buttons {
+      display: flex;
+      gap: 10px;
+      margin-left: 20px;
+    }
+
+    #graph-visualization-container, #drawing-container {
+      position: absolute;
+      top: 100px;
+      left: 100px;
+      border: 1px solid #ccc;
+      background: white;
+      padding: 10px;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    #graph-visualization-header, #drawing-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    #graph-input {
+      width: 100%;
+      height: 60px;
+      margin-bottom: 10px;
+    }
+
+    #canvas {
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+    }
+  </style>
 </head>
 <body>
   <div id="toolbar">
@@ -18,7 +55,6 @@
         <option value="javascript">JavaScript</option>
         <option value="typescript">TypeScript</option>
         <option value="html">HTML</option>
-        <!-- <option value="css">CSS</option> -->
         <option value="nodejs">Node.js</option>
         <option value="react">React</option>
         <option value="angular">Angular</option>
@@ -28,10 +64,9 @@
       <button id="open-file-button">Open File</button>
       <button id="save-file-button">Save File</button>
     </div>
-  
+
     <!-- Right-aligned buttons -->
     <div id="right-buttons">
-      <!-- <button id="run-button">Run</button> -->
       <button id="debug-button">Debug</button>
       <button id="show-errors-button">Show Errors</button>
       <button id="run-test-button">Run Test</button>
@@ -39,11 +74,21 @@
       <button id="ai-code-button">AI Generate Code</button>
       <button id="restart-suggestions-button" style="display: none;">Restart Suggestions</button>
     </div>
-  
+
+    <!-- Graph Mode and Drawing Buttons -->
+    <div id="graph-mode-buttons">
+      <button id="graph-mode-button">Graph Mode</button>
+      <button id="visualize-button" style="display: none;">Visualize</button>
+      <button id="drawing-button">Drawing Canvas</button>
+    </div>
+
     <!-- Hamburger menu for mobile -->
     <button id="menu-toggle" aria-label="Toggle menu">☰</button>
   </div>
+
   <div id="editor"></div>
+
+  <!-- Suggestion Panel -->
   <div id="suggestion-panel">
     <h3>AI Suggestions</h3>
     <div id="suggestion-content"></div>
@@ -53,6 +98,8 @@
       <button id="stop-suggestion">Stop Suggestion</button>
     </div>
   </div>
+
+  <!-- Terminal -->
   <div id="terminal">
     <pre id="output"></pre>
     <div id="terminal-scroll-buttons">
@@ -60,10 +107,14 @@
       <button id="scroll-down">↓</button>
     </div>
   </div>
+
+  <!-- Test Panel -->
   <div id="test-panel">
     <textarea id="custom-input" placeholder="Custom Input"></textarea>
     <textarea id="expected-output" placeholder="Expected Output"></textarea>
   </div>
+
+  <!-- AI Sidebar -->
   <div id="ai-sidebar">
     <div id="ai-sidebar-content">
       <button id="ai-close-button" aria-label="Close sidebar"></button>
@@ -81,6 +132,33 @@
       </div>
     </div>
   </div>
+
+  <!-- Graph/Tree Visualization Container -->
+  <div id="graph-visualization-container">
+    <div id="graph-visualization-header">
+      <h3>Graph/Tree Visualization</h3>
+      <button id="close-graph-visualization">Close</button>
+    </div>
+    <textarea id="graph-input" placeholder="Enter graph/tree input..."></textarea>
+    <button id="generate-graph">Generate Graph</button>
+    <canvas id="graph-canvas" width="400" height="300"></canvas>
+  </div>
+
+  <!-- Drawing Canvas Container -->
+<div id="drawing-container">
+  <div id="drawing-header">
+    <h3>Drawing Canvas</h3>
+    <button id="close-drawing">Close</button>
+  </div>
+  <div id="color-picker">
+    <button id="color-black" class="color-button" data-color="black">Black</button>
+    <button id="color-red" class="color-button" data-color="red">Red</button>
+    <button id="color-green" class="color-button" data-color="green">Green</button>
+    <button id="clear-canvas">Clear</button> <!-- Clear Button -->
+  </div>
+  <canvas id="drawing-canvas" width="400" height="300"></canvas>
+</div>
+
   <script src="https://unpkg.com/monaco-editor@0.33.0/min/vs/loader.js"></script>
   <script src="app.js"></script>
 </body>

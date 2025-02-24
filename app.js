@@ -265,6 +265,38 @@ require(['vs/editor/editor.main'], function () {
     await deployCode(code, language);
   });
 
+  let debounceTimeout;
+  let htmlListenerAttached = false;
+  function setupLivePreview() {
+    if (htmlListenerAttached) return; // Avoid multiple bindings
+
+    htmlListenerAttached = true;
+
+    editor.onDidChangeModelContent(() => {
+      const language = languageSelect.value;
+      if (language !== "html") return; // Run only for HTML
+
+      const code = editor.getValue();
+
+      clearTimeout(debounceTimeout);
+      debounceTimeout = setTimeout(async () => {
+        try {
+          const previewResponse = await fetch("http://localhost:3000/preview/temp.html", { method: "HEAD" });
+          if (previewResponse.ok) {
+
+            await fetch("http://localhost:3000/live-server", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code, language })
+            });
+          }
+        } catch (error) {
+          console.error("Live Server Error:", error);
+        }
+      }, 500); // Debounce for efficiency
+    });
+  }
+
   // Function to deploy code
   async function deployCode(code, language) {
     try {
@@ -277,6 +309,7 @@ require(['vs/editor/editor.main'], function () {
       const data = await response.json();
       if (data.url) {
         appendToTerminal(`✅ Deployment successful: ${data.url}`, 'terminal-success');
+        setupLivePreview();
       } else {
         appendToTerminal(`❌ Deployment failed: ${data.error}`, 'terminal-failure');
       }
@@ -477,4 +510,209 @@ require(['vs/editor/editor.main'], function () {
   aiCloseButton.addEventListener('click', () => {
     aiSidebar.classList.remove('active'); // Hide the sidebar
   });
+  // Graph Mode and Visualization Logic
+  const graphModeButton = document.getElementById('graph-mode-button');
+  const visualizeButton = document.getElementById('visualize-button');
+  const graphVisualizationContainer = document.getElementById('graph-visualization-container');
+  const closeGraphVisualization = document.getElementById('close-graph-visualization');
+  const graphInput = document.getElementById('graph-input');
+  const generateGraphButton = document.getElementById('generate-graph');
+  const graphCanvas = document.getElementById('graph-canvas');
+  const ctx = graphCanvas.getContext('2d');
+
+  // Drawing Canvas Logic
+  const drawingContainer = document.getElementById('drawing-container');
+  const closeDrawing = document.getElementById('close-drawing');
+  const drawingCanvas = document.getElementById('drawing-canvas');
+  const drawingCtx = drawingCanvas.getContext('2d');
+
+  let isDrawing = false;
+  let selectedColor = 'black'; // Default color
+
+  // Color Picker Buttons
+  const colorButtons = document.querySelectorAll('.color-button');
+  colorButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      selectedColor = button.getAttribute('data-color');
+    });
+  });
+
+  // Show Drawing Canvas
+  document.getElementById('drawing-button').addEventListener('click', () => {
+    drawingContainer.style.display = 'block';
+  });
+
+  // Clear Canvas Button
+  const clearCanvasButton = document.getElementById('clear-canvas');
+  clearCanvasButton.addEventListener('click', () => {
+    drawingCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height); // Clear the canvas
+  });
+
+  // Close Drawing Canvas
+  closeDrawing.addEventListener('click', () => {
+    drawingContainer.style.display = 'none';
+  });
+
+  // Drawing on Canvas
+  drawingCanvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    drawingCtx.beginPath();
+    drawingCtx.moveTo(e.offsetX, e.offsetY);
+    e.stopPropagation(); // Prevent container from moving
+  });
+
+  drawingCanvas.addEventListener('mousemove', (e) => {
+    if (isDrawing) {
+      drawingCtx.strokeStyle = selectedColor; // Set the selected color
+      drawingCtx.lineTo(e.offsetX, e.offsetY);
+      drawingCtx.stroke();
+    }
+  });
+
+  drawingCanvas.addEventListener('mouseup', () => {
+    isDrawing = false;
+  });
+
+  drawingCanvas.addEventListener('mouseleave', () => {
+    isDrawing = false;
+  });
+
+  // Make the containers draggable
+  function makeDraggable(element) {
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    element.addEventListener('mousedown', (e) => {
+      if (e.target === drawingCanvas) return; // Prevent dragging if drawing on canvas
+      isDragging = true;
+      offsetX = e.clientX - element.getBoundingClientRect().left;
+      offsetY = e.clientY - element.getBoundingClientRect().top;
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('graph-visualization-container').style.display = 'none';
+      document.getElementById('drawing-container').style.display = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        element.style.left = `${e.clientX - offsetX}px`;
+        element.style.top = `${e.clientY - offsetY}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+  }
+
+  // makeDraggable(graphVisualizationContainer);
+  makeDraggable(drawingContainer);
+
+  let isGraphModeEnabled = false;
+  // let isDrawing = false;
+
+  // Toggle Graph Mode
+  graphModeButton.addEventListener('click', () => {
+    isGraphModeEnabled = !isGraphModeEnabled;
+    graphModeButton.textContent = isGraphModeEnabled ? 'Disable Graph Mode' : 'Graph Mode';
+    visualizeButton.style.display = isGraphModeEnabled ? 'block' : 'none';
+  });
+
+  // Show Graph Visualization Container
+  visualizeButton.addEventListener('click', () => {
+    graphVisualizationContainer.style.display = 'block';
+  });
+
+  // Close Graph Visualization Container
+  closeGraphVisualization.addEventListener('click', () => {
+    graphVisualizationContainer.style.display = 'none';
+  });
+  // Generate Graph/Tree
+  generateGraphButton.addEventListener('click', () => {
+    const input = graphInput.value.trim();
+    const lines = input.split('\n');
+
+    if (lines.length < 2) {
+      alert('Please provide the number of nodes (n), edges (e), and the adjacency list.');
+      return;
+    }
+
+    // Parse n and e
+    const [n, e] = lines[0].split(' ').map(Number);
+    if (isNaN(n) || isNaN(e) || lines.length - 1 !== e) {
+      alert('Invalid input. Please provide the correct number of nodes, edges, and adjacency list.');
+      return;
+    }
+
+    // Parse adjacency list
+    const adjList = [];
+    for (let i = 1; i <= e; i++) {
+      const [u, v] = lines[i].split(' ').map(Number);
+      if (isNaN(u) || isNaN(v)) {
+        alert(`Invalid edge at line ${i + 1}.`);
+        return;
+      }
+      adjList.push([u, v]);
+    }
+
+    // Clear canvas
+    ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+    // Draw the graph
+    drawGraph(n, adjList);
+  });
+
+  // Function to draw the graph
+  function drawGraph(n, adjList) {
+    const radius = 20; // Radius of nodes
+    const padding = 50; // Padding around the canvas
+    const nodePositions = [];
+
+    // Calculate positions for nodes in a circular layout
+    const angleStep = (2 * Math.PI) / n;
+    const centerX = graphCanvas.width / 2;
+    const centerY = graphCanvas.height / 2;
+    const radiusLayout = Math.min(centerX, centerY) - padding;
+
+    for (let i = 0; i < n; i++) {
+      const angle = i * angleStep;
+      const x = centerX + radiusLayout * Math.cos(angle);
+      const y = centerY + radiusLayout * Math.sin(angle);
+      nodePositions.push({ x, y });
+    }
+
+    // Draw edges
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 2;
+    for (const [u, v] of adjList) {
+      const uPos = nodePositions[u - 1];
+      const vPos = nodePositions[v - 1];
+      ctx.beginPath();
+      ctx.moveTo(uPos.x, uPos.y);
+      ctx.lineTo(vPos.x, vPos.y);
+      ctx.stroke();
+    }
+
+    // Draw nodes
+    ctx.fillStyle = 'blue';
+    ctx.font = '14px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < n; i++) {
+      const { x, y } = nodePositions[i];
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.fillStyle = 'white';
+      ctx.fillText(i + 1, x, y);
+      ctx.fillStyle = 'blue';
+    }
+  }
+
+  // Make the graph visualization container draggable
+  //makeDraggable(graphVisualizationContainer);
+
+  makeDraggable(graphVisualizationContainer);
+  // makeDraggable(drawingContainer);
 });
