@@ -117,7 +117,7 @@
   <!-- AI Sidebar -->
   <div id="ai-sidebar">
     <div id="ai-sidebar-content">
-      <button id="ai-close-button" aria-label="Close sidebar"></button>
+      <button id="ai-close-button" aria-label="Close sidebar">x</button>
       <h3>AI Code Generator</h3>
       <div id="ai-generated-code"></div>
       <div id="ai-toggle-container">
@@ -132,32 +132,36 @@
       </div>
     </div>
   </div>
-
-  <!-- Graph/Tree Visualization Container -->
-  <div id="graph-visualization-container">
-    <div id="graph-visualization-header">
-      <h3>Graph/Tree Visualization</h3>
-      <button id="close-graph-visualization">Close</button>
+  <!-- Graph  -->
+  <div id="graph-visualization-container" class="visualization-container">
+    <div class="visualization-header">
+      <h2>Graph Visualization</h2>
+      <button id="close-graph-visualization" class="close-button">×</button>
     </div>
-    <textarea id="graph-input" placeholder="Enter graph/tree input..."></textarea>
-    <button id="generate-graph">Generate Graph</button>
-    <canvas id="graph-canvas" width="400" height="300"></canvas>
+    <div class="visualization-content">
+      <textarea id="graph-input" placeholder="Enter graph input (e.g., n e followed by edges)"></textarea>
+      <button id="generate-graph" class="action-button">Generate Graph</button>
+      <canvas id="graph-canvas" width="600" height="400"></canvas>
+    </div>
   </div>
-
-  <!-- Drawing Canvas Container -->
-<div id="drawing-container">
-  <div id="drawing-header">
-    <h3>Drawing Canvas</h3>
-    <button id="close-drawing">Close</button>
+  
+  <!-- Canvas -->
+  <div id="drawing-container" class="visualization-container">
+    <div class="visualization-header">
+      <h2>Drawing Canvas</h2>
+      <button id="close-drawing" class="close-button">×</button>
+    </div>
+    <div class="visualization-content">
+      <div class="color-picker">
+        <button class="color-button" data-color="black" style="background-color: black;"></button>
+        <button class="color-button" data-color="red" style="background-color: red;"></button>
+        <button class="color-button" data-color="blue" style="background-color: blue;"></button>
+        <button class="color-button" data-color="green" style="background-color: green;"></button>
+      </div>
+      <button id="clear-canvas" class="action-button">Clear Canvas</button>
+      <canvas id="drawing-canvas" width="600" height="400"></canvas>
+    </div>
   </div>
-  <div id="color-picker">
-    <button id="color-black" class="color-button" data-color="black">Black</button>
-    <button id="color-red" class="color-button" data-color="red">Red</button>
-    <button id="color-green" class="color-button" data-color="green">Green</button>
-    <button id="clear-canvas">Clear</button> <!-- Clear Button -->
-  </div>
-  <canvas id="drawing-canvas" width="400" height="300"></canvas>
-</div>
 
   <script src="https://unpkg.com/monaco-editor@0.33.0/min/vs/loader.js"></script>
   <script src="app.js"></script>
