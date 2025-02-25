@@ -1,45 +1,45 @@
-/* General Styles */
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
-  font-family: 'Roboto', sans-serif;
-  background-color: #1e1e1e;
-  color: #ffffff;
-}
+  /* General Styles */
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Roboto', sans-serif;
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
 
-/* Toolbar Styles */
-#toolbar {
-  padding: 10px;
-  background-color: #252526;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  flex-wrap: wrap;
-}
+  /* Toolbar Styles */
+  #toolbar {
+    padding: 10px;
+    background-color: #252526;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    flex-wrap: wrap;
+  }
 
-#left-buttons, #right-buttons {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
+  #left-buttons, #right-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
 
-#toolbar button, #toolbar select {
-  padding: 8px 12px;
-  background-color: #007acc;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
+  #toolbar button, #toolbar select {
+    padding: 8px 12px;
+    background-color: #007acc;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
 
-#toolbar button:hover, #toolbar select:hover {
-  background-color: #005f99;
-}
+  #toolbar button:hover, #toolbar select:hover {
+    background-color: #005f99;
+  }
 
 #toolbar select {
   background-color: #333;
@@ -195,7 +195,7 @@ body, html {
 
 #terminal-scroll-buttons {
   position: fixed;
-  bottom: 20px;
+  bottom: 8px;
   right: 20px;
   display: flex;
   gap: 5px;
@@ -346,6 +346,14 @@ body, html {
   cursor: pointer;
   padding: 5px;
   transition: color 0.3s ease;
+}
+#sidebar {
+  width: 50px;
+  transition: width 0.3s ease;
+}
+
+#sidebar:hover {
+  width: 200px;
 }
 
 #ai-close-button:hover {
@@ -568,7 +576,7 @@ textarea {
 /* Collaboration Session Styles */
 #collab-session {
   position: absolute; /* Use fixed positioning to place it above the terminal */
-  top: 438.3px; /* Adjust this value to place it above the terminal */
+  top: 550.99px; /* Adjust this value to place it above the terminal */
   right: 14.3px; /* Adjust this value to align it properly */
   z-index: 1000;
   background-color: #252526;
@@ -608,4 +616,56 @@ textarea {
 
 #create-session:hover, #join-session:hover {
   background-color: #45a049;
+}
+
+#suggestion-panel {
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+:root {
+  --background-color: #1e1e1e; /* Dark theme background */
+  --text-color: #ffffff;       /* Dark theme text color */
+}
+
+[data-theme="light"] {
+  --background-color: #ffffff; /* Light theme background */
+  --text-color: #000000;       /* Light theme text color */
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+#theme-toggle {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 10px;
+  transition: transform 0.2s ease;
+}
+
+#theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+#terminal {
+  /* width: 100%;
+  height: 200px; */
+  background-color: #1e1e1e; /* Initial dark theme */
+  color: #ffffff; /* Initial text color */
+  padding: 10px;
+  box-sizing: border-box;
+  font-family: 'Courier New', monospace;
+  overflow-y: auto;
 }

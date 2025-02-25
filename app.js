@@ -1,17 +1,87 @@
-require.config({
-  paths: {
-    vs: 'https://unpkg.com/monaco-editor@0.33.0/min/vs',
-  },
-});
+require.config({ paths: { vs: 'https://unpkg.com/monaco-editor@0.33.0/min/vs' } });
 
 require(['vs/editor/editor.main'], function () {
+  // Define the themes and their corresponding colors
+  const themes = [
+    { name: 'dark', monacoTheme: 'vs-dark', backgroundColor: '#1e1e1e', textColor: '#ffffff', emoji: '🌙' },
+    { name: 'light', monacoTheme: 'vs-light', backgroundColor: '#ffffff', textColor: '#000000', emoji: '☀️' },
+    { name: 'solarized', monacoTheme: 'solarized-dark', backgroundColor: '#002b36', textColor: '#839496', emoji: '🌞' },
+  ];
+
+  let currentThemeIndex = 0;
+
+  // Define Solarized theme for Monaco
+  monaco.editor.defineTheme('solarized-dark', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'comment', foreground: '#586e75', fontStyle: 'italic' },
+      { token: 'keyword', foreground: '#859900' },
+      { token: 'string', foreground: '#2aa198' },
+      { token: 'number', foreground: '#d33682' },
+      { token: 'identifier', foreground: '#268bd2' },
+      { token: 'operator', foreground: '#93a1a1' },
+    ],
+    colors: {
+      'editor.background': '#002b36',
+      'editor.foreground': '#839496',
+      'editorCursor.foreground': '#839496',
+      'editor.lineHighlightBackground': '#073642',
+      'editor.selectionBackground': '#586e75',
+      'editor.inactiveSelectionBackground': '#073642',
+    },
+  });
   // Initialize Monaco Editor
   const editor = monaco.editor.create(document.getElementById('editor'), {
     value: `# Welcome to Python!\nname = input("Enter your name: ")\nprint("Hello, " + name)`,
     language: 'python',
-    theme: 'vs-dark',
+    theme: themes[currentThemeIndex].monacoTheme, // Set initial theme
     automaticLayout: true,
   });
+
+  // Theme toggle button
+  const themeToggle = document.getElementById('theme-toggle');
+
+  // Function to update the theme
+  function updateTheme() {
+    // Cycle to the next theme
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+
+    // Update Monaco editor theme
+    const newTheme = themes[currentThemeIndex];
+    monaco.editor.setTheme(newTheme.monacoTheme);
+
+    // Update the emoji button
+    themeToggle.textContent = newTheme.emoji;
+
+    // Update the terminal background and text color
+    const terminal = document.getElementById('terminal');
+    terminal.style.backgroundColor = newTheme.backgroundColor;
+    terminal.style.color = newTheme.textColor;
+
+    // Optionally, save the theme preference to localStorage
+    localStorage.setItem('theme', newTheme.name);
+
+    // Debugging: Log the current theme
+    console.log('Theme changed to:', newTheme.name);
+  }
+
+  // Add click event listener to the theme toggle button
+  themeToggle.addEventListener('click', updateTheme);
+
+  // Load saved theme on page load
+  const savedThemeName = localStorage.getItem('theme') || themes[0].name;
+  const savedThemeIndex = themes.findIndex(theme => theme.name === savedThemeName);
+  if (savedThemeIndex !== -1) {
+    currentThemeIndex = savedThemeIndex;
+    monaco.editor.setTheme(themes[currentThemeIndex].monacoTheme);
+    themeToggle.textContent = themes[currentThemeIndex].emoji;
+
+    // Update the terminal background and text color on page load
+    const terminal = document.getElementById('terminal');
+    terminal.style.backgroundColor = themes[currentThemeIndex].backgroundColor;
+    terminal.style.color = themes[currentThemeIndex].textColor;
+  }
 
   // Suggestion panel elements
   const suggestionPanel = document.getElementById('suggestion-panel');
@@ -908,7 +978,7 @@ require(['vs/editor/editor.main'], function () {
       const dropdown = document.getElementById('collab-dropdown');
       dropdown.classList.toggle('show');
     });
-  
+
     // Close the dropdown if clicked outside
     window.addEventListener('click', function (event) {
       const dropdown = document.getElementById('collab-dropdown');
