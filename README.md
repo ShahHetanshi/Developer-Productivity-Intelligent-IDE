@@ -44,9 +44,9 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
    git clone https://github.com/ShahHetanshi/Developer-Productivity-Intelligent-IDE
    cd Developer-Productivity-Intelligent-IDE
 2. Install dependencies:
-   npm install
+   `npm install`
 3. Start the server:
-   node server.js
+   `node server.js`
 4. Open index.html in your browser, and you're good to go! 🎉
 
 ## 📝 License
