@@ -26,6 +26,14 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 ### 🎨 Customizable Themes  
 - Choose from **dark, light, and solarized** themes with a single click!  
 
+## 🔥 Why Use Intelligent IDE?  
+✅ **AI-Powered Efficiency** – Write code faster with **real-time AI suggestions**.  
+✅ **Instant Debugging** – Let AI **find and fix errors** for you.  
+✅ **Seamless Collaboration** – Work with your team in **real-time** using WebSockets.  
+✅ **Interactive Visuals** – Graph visualization and **drawing canvas** for better problem-solving.  
+✅ **Integrated Terminal** – Run, test, and debug without leaving the IDE.  
+
+
 ## 🛠 Technologies Used  
 
 - **Frontend**: HTML, CSS, JavaScript, **Monaco Editor**  
@@ -49,6 +57,8 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 3. Start the server:
    `node server.js`
 4. Open index.html in your browser, and you're good to go! 🎉
+
+![Untitled diagram-2025-02-25-192919](https://github.com/user-attachments/assets/55800024-733c-4309-b37b-3c5856d3fd66)
 
 ## 📝 License
 
