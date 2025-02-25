@@ -7,7 +7,7 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 
 ### 🤖 AI-Powered Code Assistance  
 - **Smart Code Suggestions**: Get **intelligent** auto-completions and optimizations using the **Gemini API**.  
-- **AI Debugging**: Identify and **fix errors automatically** before they even become a problem!  
+- **AI Debugging**: Identify and **fix and showing errors automatically** before they even become a problem!  
 - **Natural Language Code Generation**: Just type what you need, and let AI **generate** the code for you.  
 
 ### 🌍 Real-Time Collaboration  
@@ -16,7 +16,8 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 
 ### 📊 Interactive Tools  
 - **Graph Visualization**: Type in your graph data and **see** it come to life.  
-- **Drawing Canvas**: Brainstorm ideas and make quick sketches **without leaving your IDE**.  
+- **Drawing Canvas**: Brainstorm ideas and make quick sketches **without leaving your IDE**.
+- **Live Server**: Creating your **HTML websites** in minutes.
 
 ### 🛠 Code Execution & Testing  
 - **Integrated Terminal**: Run, debug, and test your code **directly** within the IDE.  
