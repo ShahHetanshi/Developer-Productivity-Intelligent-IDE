@@ -1002,5 +1002,17 @@ require(['vs/editor/editor.main'], function () {
   });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+  // Toggle the vertical slider menu
+  const menuToggleSlider = document.getElementById('menu-toggle-slider');
+  const verticalSliderMenu = document.getElementById('vertical-slider-menu');
+
+  menuToggleSlider.addEventListener('click', function () {
+    verticalSliderMenu.classList.toggle('open');
+  });
+});
+
+
+
 
 

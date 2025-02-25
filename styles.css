@@ -669,3 +669,225 @@ body {
   font-family: 'Courier New', monospace;
   overflow-y: auto;
 }
+/* Vertical Slider Menu Bar Styles */
+#vertical-slider-menu {
+  position: fixed;
+  top: 60px; /* Adjust based on your toolbar height */
+  left: 0;
+  height: calc(100% - 60px); /* Adjust based on your toolbar height */
+  width: 50px; /* Initial width when collapsed */
+  background-color: #252526;
+  z-index: 1000;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+#vertical-slider-menu.open {
+  width: 200px; /* Expanded width when open */
+}
+
+#menu-toggle-slider {
+  width: 100%;
+  padding: 10px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+}
+
+#slider-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#vertical-slider-menu.open #slider-content {
+  opacity: 1; /* Show content when open */
+}
+
+#slider-content button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  transition: background-color 0.3s ease;
+}
+
+#slider-content button:hover {
+  background-color: #005f99;
+}
+/* Editor Styles */
+#editor {
+  width: calc(100% - 50px); /* Adjust for the vertical slider menu width */
+  height: calc(60vh - 50px);
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #333;
+  margin-left: 50px; /* Space for the vertical slider menu */
+  transition: margin-left 0.3s ease; /* Smooth transition when menu expands */
+}
+
+#vertical-slider-menu.open + #editor {
+  margin-left: 200px; /* Adjust for the expanded menu width */
+}
+
+/* Terminal Styles */
+#terminal {
+  width: calc(100% - 50px); /* Adjust for the vertical slider menu width */
+  height: 20vh;
+  background-color: #252526;
+  color: #fff;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  border-top: 1px solid #333;
+  margin-left: 50px; /* Space for the vertical slider menu */
+  transition: margin-left 0.3s ease; /* Smooth transition when menu expands */
+}
+
+#vertical-slider-menu.open + #terminal {
+  margin-left: 200px; /* Adjust for the expanded menu width */
+}
+
+/* Test Panel Styles */
+#test-panel {
+  width: calc(100% - 50px); /* Adjust for the vertical slider menu width */
+  height: 20vh;
+  background-color: #252526;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid #333;
+  margin-left: 50px; /* Space for the vertical slider menu */
+  transition: margin-left 0.3s ease; /* Smooth transition when menu expands */
+}
+
+#vertical-slider-menu.open + #test-panel {
+  margin-left: 200px; /* Adjust for the expanded menu width */
+}
+
+#slider-content button:hover {
+  background-color: #005f99;
+}
+
+#slider-content button#ai-code-button {
+  background-color: #4CAF50;
+}
+
+#slider-content button#ai-code-button:hover {
+  background-color: #45a049;
+}
+
+#slider-content button#collab-button {
+  background-color: #f39c12;
+}
+
+#slider-content button#collab-button:hover {
+  background-color: #e67e22;
+}
+
+#slider-content button#graph-mode-button {
+  background-color: #9b59b6;
+}
+
+#slider-content button#graph-mode-button:hover {
+  background-color: #8e44ad;
+}
+
+#slider-content button#drawing-button {
+  background-color: #e74c3c;
+}
+
+#slider-content button#drawing-button:hover {
+  background-color: #c0392b;
+}
+/* Vertical Slider Menu Bar Styles */
+#vertical-slider-menu {
+  position: fixed;
+  top: 60px; /* Adjust based on your toolbar height */
+  left: 0;
+  height: calc(100% - 60px); /* Adjust based on your toolbar height */
+  width: 50px; /* Initial width when collapsed */
+  background-color: #252526;
+  z-index: 1000;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+#vertical-slider-menu.open {
+  width: 200px; /* Expanded width when open */
+}
+
+#menu-toggle-slider {
+  width: 100%;
+  padding: 10px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+}
+
+#vertical-text {
+  writing-mode: vertical-rl; /* Rotate text vertically */
+  transform: rotate(180deg); /* Flip text to read from bottom to top */
+  text-align: center;
+  color: #fff;
+  font-size: 30px;
+  font-weight: bold;
+  margin: 230px 0;
+  padding: 10px;
+  white-space: nowrap;
+  user-select: none; /* Prevent text selection */
+  transition: opacity 0.3s ease; /* Smooth fade-out effect */
+}
+
+/* Hide the vertical text when the menu is open */
+#vertical-slider-menu.open #vertical-text {
+  opacity: 0; /* Hide the text */
+  pointer-events: none; /* Disable interactions */
+}
+
+#slider-content {
+  opacity: 0; /* Initially hidden */
+  visibility: hidden; /* Ensure the buttons are fully hidden */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
+}
+/* Show the buttons when the menu is open */
+#vertical-slider-menu.open #slider-content {
+  opacity: 1; /* Show the buttons */
+  visibility: visible;
+}
+
+#slider-content button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: left;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between emoji and text */
+}
+
+#slider-content button:hover {
+  background-color: #005f99;
+}

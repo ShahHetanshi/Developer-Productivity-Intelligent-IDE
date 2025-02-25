@@ -83,15 +83,27 @@
 
 
     <!-- Right-aligned buttons -->
-    <div id="right-buttons">
-      <button id="debug-button">Debug</button>
-      <button id="show-errors-button">Show Errors</button>
-      <button id="run-test-button">Run Test</button>
-      <button id="deploy-button">Live Server (HTML)</button>
-      <button id="ai-code-button">AI Generate Code</button>
-      <button id="collab-button" aria-label="Collaboration">🤝</button>
-      <button id="restart-suggestions-button" style="display: none;">Restart Suggestions</button>
+    <!-- Vertical Slider Menu Bar -->
+<div id="vertical-slider-menu">
+  <button id="menu-toggle-slider">☰</button>
+  <div id="vertical-text">IDE: We Code, You Chill</div>
+  <div id="slider-content">
+    <button id="debug-button">🐞 Debug</button>
+    <!-- <button id="run-test-button">Run Test</button> -->
+    <button id="show-errors-button">❌ Show Errors</button>
+    <button id="deploy-button">🌐 Live Server (HTML)</button>
+    <button id="ai-code-button">🤖 AI Generate Code</button>
+    <button id="collab-button">🤝 Collab</button>
+    <!-- <button id="graph-mode-button">Graph Mode</button> -->
+    <div id="graph-mode-buttons">
+      <button id="graph-mode-button">📊 Graph Mode</button>
+      <button id="visualize-button" style="display: none;">Visualize</button>
+      <!-- <button id="drawing-button">Drawing Canvas</button>
+      <button id="theme-toggle">🌙</button> -->
     </div>
+    <button id="drawing-button">🎨 Drawing Canvas</button>
+  </div>
+</div>
 
 
     <!-- Collaboration Session Dropdown
@@ -106,9 +118,10 @@
 
     <!-- Graph Mode and Drawing Buttons -->
     <div id="graph-mode-buttons">
-      <button id="graph-mode-button">Graph Mode</button>
+      <!-- <button id="graph-mode-button">Graph Mode</button>
       <button id="visualize-button" style="display: none;">Visualize</button>
-      <button id="drawing-button">Drawing Canvas</button>
+      <button id="drawing-button">Drawing Canvas</button> -->
+      <button id="run-test-button">🚀 Run Test</button>
       <button id="theme-toggle">🌙</button>
     </div>
 
