@@ -54,4 +54,6 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 
 MIT License. See [LICENSE](https://github.com/ShahHetanshi/Developer-Productivity-Intelligent-IDE/blob/main/LICENSE) for details.
 
+## 👨‍💻 Develop smarter, not harder. Happy coding! 🎉
+
 ## Made with ❤️ by me.
