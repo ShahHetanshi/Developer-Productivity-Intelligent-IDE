@@ -31,6 +31,7 @@ require(['vs/editor/editor.main'], function () {
       'editor.inactiveSelectionBackground': '#073642',
     },
   });
+
   // Initialize Monaco Editor
   const editor = monaco.editor.create(document.getElementById('editor'), {
     value: `# Welcome to Python!\nname = input("Enter your name: ")\nprint("Hello, " + name)`,
@@ -106,7 +107,7 @@ require(['vs/editor/editor.main'], function () {
 
   // Function to call Gemini API
   async function callGeminiAPI(prompt) {
-    const apiKey = 'AIzaSyDoJxXE4EjKBYGj6q9JbwnTMBDR8WClFUc'; // Replace with your Gemini API key
+    const apiKey = 'AIzaSyD1fo4DL-hSV9JDIyyF9B094atQ4iGkhAs'; // Replace with your Gemini API key
     const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
     try {
@@ -580,6 +581,7 @@ require(['vs/editor/editor.main'], function () {
   aiCloseButton.addEventListener('click', () => {
     aiSidebar.classList.remove('active'); // Hide the sidebar
   });
+
   // Graph Mode and Visualization Logic
   const graphModeButton = document.getElementById('graph-mode-button');
   const visualizeButton = document.getElementById('visualize-button');
@@ -698,6 +700,7 @@ require(['vs/editor/editor.main'], function () {
   closeGraphVisualization.addEventListener('click', () => {
     graphVisualizationContainer.style.display = 'none';
   });
+
   // Generate Graph/Tree
   generateGraphButton.addEventListener('click', () => {
     const input = graphInput.value.trim();
@@ -1000,19 +1003,28 @@ require(['vs/editor/editor.main'], function () {
       collabSession.style.display = 'none'; // Hide the dropdown
     }
   });
+
+  // Sidebar Toggle Logic
+// Sidebar Toggle Logic
+document.getElementById('sidebar-toggle').addEventListener('click', () => {
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.getElementById('main-content');
+  sidebar.classList.toggle('active');
+  mainContent.classList.toggle('shifted');
+});
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Toggle the vertical slider menu
-  const menuToggleSlider = document.getElementById('menu-toggle-slider');
-  const verticalSliderMenu = document.getElementById('vertical-slider-menu');
+const canvas = document.getElementById('graph-canvas');
+const ctx = canvas.getContext('2d');
 
-  menuToggleSlider.addEventListener('click', function () {
-    verticalSliderMenu.classList.toggle('open');
-  });
-});
+// Function to clear the graph
+function clearGraph() {
+    // Clear the canvas by filling it with a background color (e.g., white)
+    ctx.fillStyle = '#ffffff'; // Set the fill color to white
+    ctx.fillRect(0, 0, canvas.width, canvas.height); // Fill the entire canvas
+    const graphInput = document.getElementById('graph-input');
+    graphInput.value = '';
+}
 
-
-
-
-
+// Attach the clearGraph function to the "Clear Graph" button
+document.getElementById('clear-graph').addEventListener('click', clearGraph);

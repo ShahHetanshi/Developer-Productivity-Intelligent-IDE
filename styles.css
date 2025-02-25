@@ -1,45 +1,45 @@
-  /* General Styles */
-  body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    font-family: 'Roboto', sans-serif;
-    background-color: #1e1e1e;
-    color: #ffffff;
-  }
+/* General Styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
 
-  /* Toolbar Styles */
-  #toolbar {
-    padding: 10px;
-    background-color: #252526;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    flex-wrap: wrap;
-  }
+/* Toolbar Styles */
+#toolbar {
+  padding: 10px;
+  background-color: #252526;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  flex-wrap: wrap;
+}
 
-  #left-buttons, #right-buttons {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
+#left-buttons, #right-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 
-  #toolbar button, #toolbar select {
-    padding: 8px 12px;
-    background-color: #007acc;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-  }
+#toolbar button, #toolbar select {
+  padding: 8px 12px;
+  background-color: #007acc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
 
-  #toolbar button:hover, #toolbar select:hover {
-    background-color: #005f99;
-  }
+#toolbar button:hover, #toolbar select:hover {
+  background-color: #005f99;
+}
 
 #toolbar select {
   background-color: #333;
@@ -78,13 +78,24 @@
 
   #right-buttons.active {
     display: flex;
+    /* text-align: right; */
   }
 
   #menu-toggle {
     display: block;
   }
 }
+/* Add this to your styles.css */
+#graph-mode-buttons {
+  display: flex;
+  gap: 10px; /* Adjust the gap between buttons as needed */
+  align-items: center;
+}
 
+#run-test-button {
+  float: right;
+  right: 20px;
+}
 /* Editor Styles */
 #editor {
   width: 100%;
@@ -93,6 +104,10 @@
   border-bottom: 1px solid #333;
 }
 
+#run-test-button {
+  float: right;
+  right:20px;
+}
 /* Suggestion Panel Styles */
 #suggestion-panel {
   position: fixed;
@@ -347,6 +362,7 @@
   padding: 5px;
   transition: color 0.3s ease;
 }
+
 #sidebar {
   width: 50px;
   transition: width 0.3s ease;
@@ -433,7 +449,7 @@
 }
 
 textarea {
-  width: 100%;
+  width: 90%;
   height: 80px;
   padding: 8px;
   border: 1px solid #ccc;
@@ -575,29 +591,33 @@ textarea {
 
 /* Collaboration Session Styles */
 #collab-session {
-  position: absolute; /* Use fixed positioning to place it above the terminal */
-  top: 550.99px; /* Adjust this value to place it above the terminal */
-  right: 14.3px; /* Adjust this value to align it properly */
+  position: fixed; /* Use fixed positioning to place it above the terminal */
+  top: 61vh; /* Adjust this value to place it above the terminal */
+  right: 2.2vh; /* Adjust this value to align it properly */
   z-index: 1000;
   background-color: #252526;
   padding: 10px;
   display: flex;
   gap: 10px;
   border: 1px solid #444;
-  /* box-sizing: border-box; */
   border-radius: 0px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   display: none;
-  height: 17.2vh;
+  height: 18.1vh;
 }
 
 #collab-dropdown {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Keep inputs and buttons in a column */
   gap: 6px;
   align-items: flex-start;
-
 }
+
+#button-row {
+  display: flex; /* Display buttons in a row */
+  gap: 6px; /* Add spacing between buttons */
+}
+
 
 #session-id {
   padding: 5px;
@@ -646,6 +666,7 @@ body {
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 #theme-toggle {
   background: none;
   border: none;
@@ -660,8 +681,8 @@ body {
 }
 
 #terminal {
-  /* width: 100%;
-  height: 200px; */
+  /* width: 100%; */
+  height: 22vh;
   background-color: #1e1e1e; /* Initial dark theme */
   color: #ffffff; /* Initial text color */
   padding: 10px;
@@ -669,225 +690,135 @@ body {
   font-family: 'Courier New', monospace;
   overflow-y: auto;
 }
-/* Vertical Slider Menu Bar Styles */
-#vertical-slider-menu {
-  position: fixed;
-  top: 60px; /* Adjust based on your toolbar height */
-  left: 0;
-  height: calc(100% - 60px); /* Adjust based on your toolbar height */
-  width: 50px; /* Initial width when collapsed */
+
+/* Sidebar Styles */
+#sidebar {
+  width: 0;
+  height: 91vh;
   background-color: #252526;
-  z-index: 1000;
+  position: fixed;
+  top: 9vh;
+  left: 0;
+  overflow-x: hidden;
   transition: width 0.3s ease;
-  overflow: hidden;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-}
-
-#vertical-slider-menu.open {
-  width: 200px; /* Expanded width when open */
-}
-
-#menu-toggle-slider {
-  width: 100%;
-  padding: 10px;
-  background-color: #007acc;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: center;
-}
-
-#slider-content {
+  z-index: 1000;
+  padding-top: 60px; /* Adjust based on toolbar height */
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  align-items: flex-start; /* Align content to the top */
+  justify-content: flex-start;
 }
 
-#vertical-slider-menu.open #slider-content {
-  opacity: 1; /* Show content when open */
+#sidebar.active {
+  width: 250px; /* Adjust the width as needed */
 }
 
-#slider-content button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007acc;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
+#sidebar button {
+  display: block;
+  width: 85%;
+  padding: 12px 15px;
   text-align: left;
-  transition: background-color 0.3s ease;
+  background: #f5f5f5; /* Light neutral background */
+  color: #333; /* Dark gray text for readability */
+  border: 1px solid #ddd; /* Subtle border for a clean look */
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin: 6px 0;
+  border-radius: 6px; /* Smooth rounded edges */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow */
 }
 
-#slider-content button:hover {
-  background-color: #005f99;
-}
-/* Editor Styles */
-#editor {
-  width: calc(100% - 50px); /* Adjust for the vertical slider menu width */
-  height: calc(60vh - 50px);
-  background-color: #1e1e1e;
-  border-bottom: 1px solid #333;
-  margin-left: 50px; /* Space for the vertical slider menu */
-  transition: margin-left 0.3s ease; /* Smooth transition when menu expands */
+#sidebar button#debug-button {
+  background-color: #16a085; /* Deep Cyan */
 }
 
-#vertical-slider-menu.open + #editor {
-  margin-left: 200px; /* Adjust for the expanded menu width */
+#sidebar button#debug-button:hover {
+  background-color: #13856e;
 }
 
-/* Terminal Styles */
-#terminal {
-  width: calc(100% - 50px); /* Adjust for the vertical slider menu width */
-  height: 20vh;
-  background-color: #252526;
-  color: #fff;
-  padding: 10px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  border-top: 1px solid #333;
-  margin-left: 50px; /* Space for the vertical slider menu */
-  transition: margin-left 0.3s ease; /* Smooth transition when menu expands */
+#sidebar button#show-errors-button {
+  background-color: yellow; /* Bright Pink */
 }
 
-#vertical-slider-menu.open + #terminal {
-  margin-left: 200px; /* Adjust for the expanded menu width */
+#sidebar button#show-errors-button:hover {
+  background-color: yellow;
 }
 
-/* Test Panel Styles */
-#test-panel {
-  width: calc(100% - 50px); /* Adjust for the vertical slider menu width */
-  height: 20vh;
-  background-color: #252526;
-  padding: 10px;
-  box-sizing: border-box;
-  display: flex;
-  gap: 10px;
-  border-top: 1px solid #333;
-  margin-left: 50px; /* Space for the vertical slider menu */
-  transition: margin-left 0.3s ease; /* Smooth transition when menu expands */
+#sidebar button#deploy-button {
+  background-color: pink; /* Vibrant Green */
 }
 
-#vertical-slider-menu.open + #test-panel {
-  margin-left: 200px; /* Adjust for the expanded menu width */
+#sidebar button#deploy-button:hover {
+  background-color: pink;
 }
 
-#slider-content button:hover {
-  background-color: #005f99;
+#sidebar button#ai-code-button {
+  background-color: #4CAF50; /* Leaf Green */
 }
 
-#slider-content button#ai-code-button {
-  background-color: #4CAF50;
-}
-
-#slider-content button#ai-code-button:hover {
+#sidebar button#ai-code-button:hover {
   background-color: #45a049;
 }
 
-#slider-content button#collab-button {
-  background-color: #f39c12;
+#sidebar button#collab-button {
+  background-color: #f39c12; /* Warm Orange */
 }
 
-#slider-content button#collab-button:hover {
+#sidebar button#collab-button:hover {
   background-color: #e67e22;
 }
 
-#slider-content button#graph-mode-button {
-  background-color: #9b59b6;
+#sidebar button#graph-mode-button {
+  background-color: #9b59b6; /* Royal Purple */
 }
 
-#slider-content button#graph-mode-button:hover {
+#sidebar button#graph-mode-button:hover {
   background-color: #8e44ad;
 }
 
-#slider-content button#drawing-button {
-  background-color: #e74c3c;
+#sidebar button#drawing-button {
+  background-color: #e74c3c; /* Bright Red */
 }
 
-#slider-content button#drawing-button:hover {
+#sidebar button#drawing-button:hover {
   background-color: #c0392b;
 }
-/* Vertical Slider Menu Bar Styles */
-#vertical-slider-menu {
-  position: fixed;
-  top: 60px; /* Adjust based on your toolbar height */
-  left: 0;
-  height: calc(100% - 60px); /* Adjust based on your toolbar height */
-  width: 50px; /* Initial width when collapsed */
-  background-color: #252526;
-  z-index: 1000;
-  transition: width 0.3s ease;
-  overflow: hidden;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+
+
+#sidebar button:hover {
+  background: #e0e0e0; /* Slightly darker background on hover */
+  transform: translateY(-2px); /* Subtle lift effect */
 }
 
-#vertical-slider-menu.open {
-  width: 200px; /* Expanded width when open */
+#sidebar button:active {
+  background: #d6d6d6; /* Even darker when clicked */
+  transform: translateY(0);
 }
 
-#menu-toggle-slider {
-  width: 100%;
-  padding: 10px;
-  background-color: #007acc;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
+#collab-button {
+  font-size: 18px;
   text-align: center;
 }
 
-#vertical-text {
-  writing-mode: vertical-rl; /* Rotate text vertically */
-  transform: rotate(180deg); /* Flip text to read from bottom to top */
-  text-align: center;
-  color: #fff;
-  font-size: 30px;
-  font-weight: bold;
-  margin: 230px 0;
-  padding: 10px;
-  white-space: nowrap;
-  user-select: none; /* Prevent text selection */
-  transition: opacity 0.3s ease; /* Smooth fade-out effect */
+#main-content {
+  transition: margin-left 0.3s ease;
+  margin-left: 0;
 }
 
-/* Hide the vertical text when the menu is open */
-#vertical-slider-menu.open #vertical-text {
-  opacity: 0; /* Hide the text */
-  pointer-events: none; /* Disable interactions */
+#main-content.shifted {
+  margin-left: 250px; /* Adjust based on sidebar width */
 }
 
-#slider-content {
-  opacity: 0; /* Initially hidden */
-  visibility: hidden; /* Ensure the buttons are fully hidden */
-  transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
-}
-/* Show the buttons when the menu is open */
-#vertical-slider-menu.open #slider-content {
-  opacity: 1; /* Show the buttons */
-  visibility: visible;
-}
-
-#slider-content button {
-  width: 100%;
-  padding: 10px;
+#sidebar-toggle {
+  padding: 8px 12px;
   background-color: #007acc;
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  text-align: left;
+  margin-right: 10px;
   transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Space between emoji and text */
-}
-
-#slider-content button:hover {
-  background-color: #005f99;
 }

@@ -4,51 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> IDE: We Code, You Chill</title>
+  <title>IDE: We Code, You Chill</title>
   <link rel="stylesheet" href="styles.css">
-  <style>
-    /* Additional styles for the new features */
-    #graph-mode-buttons {
-      display: flex;
-      gap: 10px;
-      margin-left: 20px;
-    }
-
-    #graph-visualization-container,
-    #drawing-container {
-      position: absolute;
-      top: 100px;
-      left: 100px;
-      border: 1px solid #ccc;
-      background: white;
-      padding: 10px;
-      z-index: 1000;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    #graph-visualization-header,
-    #drawing-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    #graph-input {
-      width: 100%;
-      height: 60px;
-      margin-bottom: 10px;
-    }
-
-    #canvas {
-      border: 1px solid #ccc;
-      background: #f9f9f9;
-    }
-  </style>
 </head>
 
 <body>
   <div id="toolbar">
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+
     <!-- Left-aligned buttons -->
     <div id="left-buttons">
       <select id="language-select">
@@ -63,7 +27,6 @@
       <button id="new-file-button">New File</button>
       <button id="open-file-button">Open File</button>
       <button id="save-file-button">Save File</button>
-      <!-- Add this inside the #toolbar div -->
       <button id="search-icon-button" aria-label="Search">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -72,7 +35,7 @@
         </svg>
       </button>
 
-      <!-- Add this search panel somewhere in the body -->
+      <!-- Search Panel -->
       <div id="search-panel" style="display: none;">
         <button id="code-close-button" aria-label="Close search panel">×</button>
         <input type="text" id="code-search-input" placeholder="Search for code helpers...">
@@ -81,47 +44,18 @@
       </div>
     </div>
 
-
     <!-- Right-aligned buttons -->
-    <!-- Vertical Slider Menu Bar -->
-<div id="vertical-slider-menu">
-  <button id="menu-toggle-slider">☰</button>
-  <div id="vertical-text">IDE: We Code, You Chill</div>
-  <div id="slider-content">
-    <button id="debug-button">🐞 Debug</button>
-    <!-- <button id="run-test-button">Run Test</button> -->
-    <button id="show-errors-button">❌ Show Errors</button>
-    <button id="deploy-button">🌐 Live Server (HTML)</button>
-    <button id="ai-code-button">🤖 AI Generate Code</button>
-    <button id="collab-button">🤝 Collab</button>
-    <!-- <button id="graph-mode-button">Graph Mode</button> -->
-    <div id="graph-mode-buttons">
-      <button id="graph-mode-button">📊 Graph Mode</button>
-      <button id="visualize-button" style="display: none;">Visualize</button>
-      <!-- <button id="drawing-button">Drawing Canvas</button>
-      <button id="theme-toggle">🌙</button> -->
-    </div>
-    <button id="drawing-button">🎨 Drawing Canvas</button>
-  </div>
-</div>
-
-
-    <!-- Collaboration Session Dropdown
-     <div id="collab-session">
-      <div id="collab-dropdown">
-        <input type="text" id="name" placeholder="Enter Your Name">
-        <input type="text" id="session-id" placeholder="Enter session ID">
-        <button id="create-session" aria-label="Collaboration">👥</button>
-        <button id="join-session">Join Session</button>
-      </div>
+    <!-- <div id="right-buttons">
+      <button id="run-test-button"style="text-align: right;">Run Test</button>
+      <button id="restart-suggestions-button" style="display: none;">Restart Suggestions</button>
     </div> -->
 
     <!-- Graph Mode and Drawing Buttons -->
     <div id="graph-mode-buttons">
-      <!-- <button id="graph-mode-button">Graph Mode</button>
-      <button id="visualize-button" style="display: none;">Visualize</button>
-      <button id="drawing-button">Drawing Canvas</button> -->
-      <button id="run-test-button">🚀 Run Test</button>
+      <div id="right-buttons">
+        <button id="run-test-button"style="text-align: right;">▶️ Run Test</button>
+        <button id="restart-suggestions-button" style="display: none;">Restart Suggestions</button>
+      </div>
       <button id="theme-toggle">🌙</button>
     </div>
 
@@ -129,99 +63,115 @@
     <button id="menu-toggle" aria-label="Toggle menu">☰</button>
   </div>
 
-  <div id="editor"></div>
-
-  <!-- Suggestion Panel -->
-  <div id="suggestion-panel">
-    <h3>AI Suggestions</h3>
-    <div id="suggestion-content"></div>
-    <input type="range" id="suggestion-slider" min="0" max="100" value="0">
-    <div id="suggestion-buttons">
-      <button id="apply-suggestion">Apply Suggestion</button>
-      <button id="stop-suggestion">Stop Suggestion</button>
-    </div>
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <button id="debug-button">🐞 Debug</button>
+    <button id="show-errors-button">❌ Show Error</button>
+    <button id="deploy-button">🌐 Live Server (HTML)</button>
+    <button id="ai-code-button">🤖 AI Generate Code</button>
+    <button id="collab-button" aria-label="Collaboration">🤝 Collab</button>
+    <button id="graph-mode-button">📊 Graph Mode</button>
+    <button id="visualize-button" style="display: none;">Visualize</button>
+    <button id="drawing-button">🎨 Drawing Canvas</button>
   </div>
 
-  <!-- Terminal -->
-  <div id="terminal">
-    <pre id="output"></pre>
-    <div id="terminal-scroll-buttons">
-      <button id="scroll-up">↑</button>
-    <button id="scroll-down">↓</button>
-    </div>
-  </div>
+  <!-- Main Content -->
+  <div id="main-content">
+    <div id="editor"></div>
 
-  <!-- Test Panel -->
-  <div id="test-panel">
-    <textarea id="custom-input" placeholder="Custom Input"></textarea>
-    <textarea id="expected-output" placeholder="Expected Output"></textarea>
-  </div>
-
-  <!-- AI Sidebar -->
-  <div id="ai-sidebar">
-    <div id="ai-sidebar-content">
-      <button id="ai-close-button" aria-label="Close sidebar">x</button>
-      <h3>AI Code Generator</h3>
-      <div id="ai-generated-code"></div>
-      <div id="ai-toggle-container">
-        <label for="ai-toggle">Show in Main Code:</label>
-        <input type="checkbox" id="ai-toggle" checked>
-      </div>
-      <textarea id="ai-prompt" placeholder="Enter your prompt here..."></textarea>
-      <div id="ai-buttons">
-        <button id="ai-submit">Generate Code</button>
-        <button id="ai-copy">Copy Code</button>
-        <button id="ai-edit">Edit Code</button>
+    <!-- Suggestion Panel -->
+    <div id="suggestion-panel">
+      <h3>AI Suggestions</h3>
+      <div id="suggestion-content"></div>
+      <input type="range" id="suggestion-slider" min="0" max="100" value="0">
+      <div id="suggestion-buttons">
+        <button id="apply-suggestion">Apply Suggestion</button>
+        <button id="stop-suggestion">Stop Suggestion</button>
       </div>
     </div>
-  </div>
 
-  <!-- Graph  -->
-  <div id="graph-visualization-container" class="visualization-container">
-    <div class="visualization-header">
-      <h2>Graph Visualization</h2>
-      <button id="close-graph-visualization" class="close-button">×</button>
-    </div>
-    <div class="visualization-content">
-      <textarea id="graph-input" placeholder="Enter graph input (e.g., n e followed by edges)"></textarea>
-      <button id="generate-graph" class="action-button">Generate Graph</button>
-      <canvas id="graph-canvas" width="600" height="400"></canvas>
-    </div>
-  </div>
-
-  <!-- Canvas -->
-  <div id="drawing-container" class="visualization-container">
-    <div class="visualization-header">
-      <h2>Drawing Canvas</h2>
-      <button id="close-drawing" class="close-button">×</button>
-    </div>
-    <div class="visualization-content">
-      <div class="color-picker">
-        <button class="color-button" data-color="black" style="background-color: black;"></button>
-        <button class="color-button" data-color="red" style="background-color: red;"></button>
-        <button class="color-button" data-color="blue" style="background-color: blue;"></button>
-        <button class="color-button" data-color="green" style="background-color: green;"></button>
+    <!-- Terminal -->
+    <div id="terminal">
+      <pre id="output"></pre>
+      <div id="terminal-scroll-buttons">
+        <button id="scroll-up">↑</button>
+        <button id="scroll-down">↓</button>
       </div>
-      <button id="clear-canvas" class="action-button">Clear Canvas</button>
-      <canvas id="drawing-canvas" width="600" height="400"></canvas>
+    </div>
+
+    <!-- Test Panel -->
+    <div id="test-panel">
+      <textarea id="custom-input" placeholder="Custom Input"></textarea>
+      <textarea id="expected-output" placeholder="Expected Output"></textarea>
+    </div>
+
+    <!-- AI Sidebar -->
+    <div id="ai-sidebar">
+      <div id="ai-sidebar-content">
+        <button id="ai-close-button" aria-label="Close sidebar">x</button>
+        <h3>AI Code Generator</h3>
+        <div id="ai-generated-code"></div>
+        <div id="ai-toggle-container">
+          <label for="ai-toggle">Show in Main Code:</label>
+          <input type="checkbox" id="ai-toggle" checked>
+        </div>
+        <textarea id="ai-prompt" placeholder="Enter your prompt here..."></textarea>
+        <div id="ai-buttons">
+          <button id="ai-submit">Generate Code</button>
+          <button id="ai-copy">Copy Code</button>
+          <button id="ai-edit">Edit Code</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graph Visualization -->
+    <div id="graph-visualization-container" class="visualization-container">
+      <div class="visualization-header">
+        <h2>Graph Visualization</h2>
+        <button id="close-graph-visualization" class="close-button">×</button>
+      </div>
+      <div class="visualization-content">
+        <textarea id="graph-input" placeholder="Enter graph input (e.g., n e followed by edges)"></textarea>
+        <button id="generate-graph" class="action-button">Generate Graph</button>
+        <button id="clear-graph" class="action-button">Clear Graph</button>
+        <canvas id="graph-canvas" width="600" height="400"></canvas>
+      </div>
+    </div>
+
+    <!-- Drawing Canvas -->
+    <div id="drawing-container" class="visualization-container">
+      <div class="visualization-header">
+        <h2>Drawing Canvas</h2>
+        <button id="close-drawing" class="close-button">×</button>
+      </div>
+      <div class="visualization-content">
+        <div class="color-picker">
+          <button class="color-button" data-color="black" style="background-color: black;"></button>
+          <button class="color-button" data-color="red" style="background-color: red;"></button>
+          <button class="color-button" data-color="blue" style="background-color: blue;"></button>
+          <button class="color-button" data-color="green" style="background-color: green;"></button>
+        </div>
+        <button id="clear-canvas" class="action-button">Clear Canvas</button>
+        <canvas id="drawing-canvas" width="600" height="400"></canvas>
+      </div>
+    </div>
+
+    <!-- Collaboration Session Dropdown -->
+    <div id="collab-session">
+      <div id="collab-dropdown">
+        <input type="text" id="name" placeholder="Enter Your Name">
+        <input type="text" id="session-id" placeholder="Enter session ID">
+        <div id="button-row"> <!-- New container for buttons -->
+          <button id="create-session" aria-label="Collaboration">➕ Create</button>
+          <button id="join-session">👥 Join</button>
+        </div>
+      </div>
     </div>
   </div>
 
-
-  <!-- Collaboration Session Dropdown -->
-  <div id="collab-session">
-    <div id="collab-dropdown">
-      <input type="text" id="name" placeholder="Enter Your Name">
-      <input type="text" id="session-id" placeholder="Enter session ID">
-      <button id="create-session" aria-label="Collaboration">➕ Add/create</button>
-      <button id="join-session">👥 Join group</button>
-    </div>
-  </div>
-
-  <!-- <div id="particles-js"></div> -->
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
   <script src="https://unpkg.com/monaco-editor@0.33.0/min/vs/loader.js"></script>
   <script src="app.js"></script>
 </body>
+
 </html>
