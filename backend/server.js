@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const tmp = require('tmp');
 const WebSocket = require('ws'); // Import WebSocket only once
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
@@ -17,6 +18,11 @@ const htmlFilePath = path.join(htmlPreviewDir, 'temp.html'); // Static file path
 
 // Serve the static HTML preview
 app.use('/preview', express.static(htmlPreviewDir, { cacheControl: false }));
+
+app.get('/api/key', (req, res) => {
+    console.log(1);
+    res.json({ apiKey: process.env.GEMINI_API_KEY || '' });
+});
 
 // Create a WebSocket server
 const wss = new WebSocket.Server({ port: 8080 });

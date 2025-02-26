@@ -105,14 +105,21 @@ require(['vs/editor/editor.main'], function () {
     return response;
   }
 
+  async function getAPIKey() {
+    try {
+      const response = await fetch('http://localhost:3000/api/key');
+      const data = await response.json();
+      return data.apiKey;
+    } catch (error) {
+      console.error('Error fetching API key:', error);
+      return null;
+    }
+  }
   // Function to call Gemini API
   async function callGeminiAPI(prompt) {
-    require('dotenv').config();
-
-    const apiKey = process.env.API_KEY;
-
-    console.log('API Key:', apiKey);
-    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const apiKey = await getAPIKey();
+    console.log(apiKey) // Replace with your Gemini API key
+    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
     try {
       const response = await fetch(`${apiUrl}?key=${apiKey}`, {
@@ -850,32 +857,32 @@ require(['vs/editor/editor.main'], function () {
   });
 
   // Modify the callGeminiAPI function
-  async function callGeminiAPI(prompt) {
-    console.log(prompt);
-    const apiKey = 'AIzaSyCR2re9hZJRgxSHS73q4oo32OuhUiqDkF0'; // Replace with a valid API key
-    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  // async function callGeminiAPI(prompt) {
+  //   console.log(prompt);
+  //   // Replace with a valid API key
+  //   const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompt }] }]
-        }),
-      });
+  //   try {
+  //     const response = await fetch(apiUrl, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         contents: [{ role: "user", parts: [{ text: prompt }] }]
+  //       }),
+  //     });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
 
-      const data = await response.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "No response from API";
-    } catch (error) {
-      return `Failed to fetch suggestions: ${error.message}`;
-    }
-}
+  //     const data = await response.json();
+  //     return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "No response from API";
+  //   } catch (error) {
+  //     return `Failed to fetch suggestions: ${error.message}`;
+  //   }
+  // }
 
 
   // Connect to the WebSocket server
@@ -1016,11 +1023,11 @@ require(['vs/editor/editor.main'], function () {
   });
 
   // Sidebar Toggle Logic
-// Sidebar Toggle Logic
-document.getElementById('sidebar-toggle').addEventListener('click', () => {
-  const sidebar = document.getElementById('sidebar');
-  const mainContent = document.getElementById('main-content');
-  sidebar.classList.toggle('active');
-  mainContent.classList.toggle('shifted');
-});
+  // Sidebar Toggle Logic
+  document.getElementById('sidebar-toggle').addEventListener('click', () => {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    sidebar.classList.toggle('active');
+    mainContent.classList.toggle('shifted');
+  });
 });
