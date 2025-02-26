@@ -38,7 +38,7 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 
 - **Frontend**: HTML, CSS, JavaScript, **Monaco Editor**  
 - **Backend**: Node.js, Express.js  
-- **AI Integration**: Gemini API  
+- **AI Integration**: Gemini API: gemini-2.0-flash
 - **Real-Time Communication**: WebSocket  
 
 ## 🚀 Getting Started  
@@ -56,7 +56,8 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
    `npm install`
 3. Start the server:
    `node server.js`
-4. Open index.html in your browser, and you're good to go! 🎉
+4. Set up API key for Gemini: `apiKey=your_gemini_key`
+5. Open index.html in your browser, and you're good to go! 🎉
 
 ![Untitled diagram-2025-02-25-192919](https://github.com/user-attachments/assets/55800024-733c-4309-b37b-3c5856d3fd66)
 
