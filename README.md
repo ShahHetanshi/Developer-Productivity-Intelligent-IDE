@@ -59,10 +59,12 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
    Keep dotenv in backend folder.
 4. Start the server:
    `node server.js`
-5. Set up API key for Gemini in the .env file: `GEMINI_API_KEY=your_api_key`
-6. To install the required dependencies, run the following command:
+5. Open the Live Server for the Webpage look: (open live server/directly open the file in your browser)
+   `index.html`
+6. Set up API key for Gemini in the .env file: `GEMINI_API_KEY=your_api_key`
+7. To install the required dependencies, run the following command:
 `npm install $(cat requirements.txt | xargs)`
-7. Open index.html in your browser, and you're good to go! 🎉
+8. Open index.html in your browser, and you're good to go! 🎉
 
 ![Untitled diagram-2025-02-25-192919](https://github.com/user-attachments/assets/55800024-733c-4309-b37b-3c5856d3fd66)
 
