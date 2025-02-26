@@ -54,7 +54,8 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
    cd Developer-Productivity-Intelligent-IDE
 2. Install dependencies:
    `npm install`
-    `npm install dotenv`
+   `npm install tmp`
+   `npm install dotenv`
    Keep dotenv in backend folder.
 4. Start the server:
    `node server.js`
