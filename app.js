@@ -107,7 +107,11 @@ require(['vs/editor/editor.main'], function () {
 
   // Function to call Gemini API
   async function callGeminiAPI(prompt) {
-    const apiKey = 'AIzaSyCR2re9hZJRgxSHS73q4oo32OuhUiqDkF0'; // Replace with a valid API key
+    require('dotenv').config();
+
+    const apiKey = process.env.API_KEY;
+
+    console.log('API Key:', apiKey);
     const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     try {
