@@ -63,8 +63,7 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 6. ## Installation
 
 To install the required dependencies, run the following command:
-```sh
-npm install $(cat requirements.txt | xargs)
+`npm install $(cat requirements.txt | xargs)`
 
 7. Open index.html in your browser, and you're good to go! 🎉
 
