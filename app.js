@@ -849,7 +849,7 @@ require(['vs/editor/editor.main'], function () {
   async function callGeminiAPI(prompt) {
     console.log(prompt);
     const apiKey = 'AIzaSyCR2re9hZJRgxSHS73q4oo32OuhUiqDkF0'; // Replace with a valid API key
-    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     try {
       const response = await fetch(apiUrl, {
