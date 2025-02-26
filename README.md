@@ -60,11 +60,8 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 4. Start the server:
    `node server.js`
 5. Set up API key for Gemini in the .env file: `GEMINI_API_KEY=your_api_key`
-6. ## Installation
-
-To install the required dependencies, run the following command:
+6. To install the required dependencies, run the following command:
 `npm install $(cat requirements.txt | xargs)`
-
 7. Open index.html in your browser, and you're good to go! 🎉
 
 ![Untitled diagram-2025-02-25-192919](https://github.com/user-attachments/assets/55800024-733c-4309-b37b-3c5856d3fd66)
