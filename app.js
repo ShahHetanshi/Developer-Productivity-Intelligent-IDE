@@ -968,7 +968,7 @@ require(['vs/editor/editor.main'], function () {
     const message = JSON.stringify({ type: 'createSession', sessionId, code, language, name });
     ws.send(message);
     const joinButton = document.getElementById('join-session');
-    joinButton.textContent = 'Leave Session';
+    joinButton.textContent = '👥 Leave';
   });
 
   // Join and leave an existing session
@@ -977,17 +977,17 @@ require(['vs/editor/editor.main'], function () {
     const joinButton = document.getElementById('join-session');
     const name = document.getElementById('name').value || "Anonymous";
     if (sessionId) {
-      if (joinButton.textContent === '👥 Join group') {
+      if (joinButton.textContent === '👥 Join') {
         const message = JSON.stringify({ type: 'joinSession', sessionId, name });
         ws.send(message);
-        joinButton.textContent = '👥 Join group';
+        joinButton.textContent = '👥 Leave';
       }
       else {
-        console.log("HETUMAAM");
+        // console.log("HETUMAAM");
         const message = JSON.stringify({ type: 'leaveSession', sessionId, name });
         ws.send(message);
         console.log('✅ Left session:', sessionId);
-        joinButton.textContent = '👥 Join group';
+        joinButton.textContent = '👥 Join';
       }
     } else {
       alert('Please enter a session ID.');
