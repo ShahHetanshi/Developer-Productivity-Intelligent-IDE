@@ -54,10 +54,11 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
    cd Developer-Productivity-Intelligent-IDE
 2. Install dependencies:
    `npm install`
-3. Start the server:
+    `npm install dotenv`
+4. Start the server:
    `node server.js`
-4. Set up API key for Gemini: `apiKey=your_gemini_key`
-5. Open index.html in your browser, and you're good to go! 🎉
+5. Set up API key for Gemini: `apiKey=your_gemini_key`
+6. Open index.html in your browser, and you're good to go! 🎉
 
 ![Untitled diagram-2025-02-25-192919](https://github.com/user-attachments/assets/55800024-733c-4309-b37b-3c5856d3fd66)
 
