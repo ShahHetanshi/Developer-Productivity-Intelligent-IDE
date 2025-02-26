@@ -20,7 +20,8 @@ const htmlFilePath = path.join(htmlPreviewDir, 'temp.html'); // Static file path
 app.use('/preview', express.static(htmlPreviewDir, { cacheControl: false }));
 
 app.get('/api/key', (req, res) => {
-    console.log(1);
+    // console.log(-1);
+    // console.log(process.env.GEMINI_API_KEY)
     res.json({ apiKey: process.env.GEMINI_API_KEY || '' });
 });
 

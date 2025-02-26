@@ -118,7 +118,7 @@ require(['vs/editor/editor.main'], function () {
   // Function to call Gemini API
   async function callGeminiAPI(prompt) {
     const apiKey = await getAPIKey();
-    console.log(apiKey) // Replace with your Gemini API key
+    // console.log(apiKey) // Replace with your Gemini API key
     const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
     try {
@@ -1030,3 +1030,4 @@ require(['vs/editor/editor.main'], function () {
     sidebar.classList.toggle('active');
     mainContent.classList.toggle('shifted');
   });
+});
