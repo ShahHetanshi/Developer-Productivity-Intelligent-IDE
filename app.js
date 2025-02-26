@@ -1030,4 +1030,3 @@ require(['vs/editor/editor.main'], function () {
     sidebar.classList.toggle('active');
     mainContent.classList.toggle('shifted');
   });
-});
