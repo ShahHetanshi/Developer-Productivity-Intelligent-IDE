@@ -107,7 +107,7 @@ require(['vs/editor/editor.main'], function () {
 
   // Function to call Gemini API
   async function callGeminiAPI(prompt) {
-    const apiKey = 'AIzaSyD1fo4DL-hSV9JDIyyF9B094atQ4iGkhAs'; // Replace with your Gemini API key
+    const apiKey = 'AIzaSyDoJxXE4EjKBYGj6q9JbwnTMBDR8WClFUc'; // Replace with your Gemini API key
     const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
     try {
@@ -847,25 +847,32 @@ require(['vs/editor/editor.main'], function () {
 
   // Modify the callGeminiAPI function
   async function callGeminiAPI(prompt) {
-    const apiKey = 'AIzaSyDoJxXE4EjKBYGj6q9JbwnTMBDR8WClFUc'; // Replace with your Gemini API key
-    const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    console.log(prompt);
+    const apiKey = 'AIzaSyCR2re9hZJRgxSHS73q4oo32OuhUiqDkF0'; // Replace with a valid API key
+    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     try {
-      const response = await fetch(`${apiUrl}?key=${apiKey}`, {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          contents: [{ role: "user", parts: [{ text: prompt }] }]
         }),
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
       const data = await response.json();
-      return data.candidates[0].content.parts[0].text.trim();
+      return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "No response from API";
     } catch (error) {
       return `Failed to fetch suggestions: ${error.message}`;
     }
-  }
+}
+
 
   // Connect to the WebSocket server
   const ws = new WebSocket('ws://localhost:8080');
@@ -1013,18 +1020,3 @@ document.getElementById('sidebar-toggle').addEventListener('click', () => {
   mainContent.classList.toggle('shifted');
 });
 });
-
-const canvas = document.getElementById('graph-canvas');
-const ctx = canvas.getContext('2d');
-
-// Function to clear the graph
-function clearGraph() {
-    // Clear the canvas by filling it with a background color (e.g., white)
-    ctx.fillStyle = '#ffffff'; // Set the fill color to white
-    ctx.fillRect(0, 0, canvas.width, canvas.height); // Fill the entire canvas
-    const graphInput = document.getElementById('graph-input');
-    graphInput.value = '';
-}
-
-// Attach the clearGraph function to the "Clear Graph" button
-document.getElementById('clear-graph').addEventListener('click', clearGraph);
