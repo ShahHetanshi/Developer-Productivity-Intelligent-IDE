@@ -55,6 +55,7 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 2. Install dependencies:
    `npm install`
     `npm install dotenv`
+   Keep dotenv in backend folder.
 4. Start the server:
    `node server.js`
 5. Set up API key for Gemini in the .env file: `GEMINI_API_KEY=your_api_key`
