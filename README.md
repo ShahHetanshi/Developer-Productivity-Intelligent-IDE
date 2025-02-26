@@ -38,7 +38,7 @@ Welcome to **Intelligent IDE**, the next-gen **AI-powered** Integrated Developme
 
 - **Frontend**: HTML, CSS, JavaScript, **Monaco Editor**  
 - **Backend**: Node.js, Express.js  
-- **AI Integration**: Gemini API  
+- **AI Integration**: Gemini API: gemini-1.5-flash
 - **Real-Time Communication**: WebSocket  
 
 ## 🚀 Getting Started  
